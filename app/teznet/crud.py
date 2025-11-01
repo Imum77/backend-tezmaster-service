@@ -111,11 +111,12 @@ def find_subs(msisdn, fmsisdn):
 def post_requests_detail(msisdn, case_id):
     try:
 
-            url = "http://10.84.33.83/gpon/cch/view.php?action=get_req_detail&case_id="+case_id+"&customer_msisdn="+msisdn+""
+            url = f"http://10.84.33.83/gpon/cch/view.php?action=get_req_detail&case_id={case_id}&customer_msisdn={msisdn}"
             payload={}
             headers = {}
             
             response = requests.request('POST', url, headers=headers, data=payload)
+            print('--->', response)
             res = response.json()
             return res
     except:
