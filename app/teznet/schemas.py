@@ -33,7 +33,7 @@ class FindSubsRequest(BaseModel):
 
 
 class ReqDetailRequest(BaseModel):
-       case_id  : str
+       case_id  : int
 
 class DelDeviceRequest(BaseModel):
        phone    : str = Field(min_length=12, max_length=12)
