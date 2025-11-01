@@ -11,9 +11,9 @@ router = APIRouter()
 
 
 @router.post("/auth/otp")
-def get_auth_otp(msisdn: str = Body(min_length=12, max_length=12), db: Session = Depends(get_db)):
+def get_auth_otp(phone: str = Body(min_length=12, max_length=12), db: Session = Depends(get_db)):
     return auth_otp(
-        msisdn=msisdn,
+        msisdn=phone,
         db=db
     )
 
