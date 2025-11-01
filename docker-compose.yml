@@ -14,7 +14,7 @@ services:
 
     environment:
       - TZ=Asia/Ashgabat
-      # - no_proxy=10.84.159.2,10.84.27.6
+      - no_proxy=10.84.159.2,10.84.27.6,10.84.52.6,10.84.33.83
 
   db:
     image: mysql:8.0
