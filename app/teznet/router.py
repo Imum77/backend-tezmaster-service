@@ -56,7 +56,7 @@ async def request_detail(
         
     ):
     msisdn = '992700017000'
-    return post_requests_detail(msisdn=msisdn, case_id=1)
+    return post_requests_detail(msisdn=msisdn, case_id=data.case_id)
 
 @router.post("/teznet/change-req-user/")
 def request_user(data: ReqUserRequest = Query(), msisdn: str = Depends(verify_access_token)):
