@@ -27,15 +27,15 @@ def get_requests_by_msisdn(
     # msisdn = '992700017000'
     return get_requests(msisdn=msisdn, limit=data.limit, offset=data.offset)
 
-@router.get("/cab/teznet/teznet-status/")
+@router.get("/teznet/teznet-status/")
 def get_status_by_msisdn(msisdn: str = Depends(verify_access_token)):
     return get_history(msisdn=msisdn)
 
-@router.post("/cab/teznet/add-comment")
+@router.post("/teznet/add-comment")
 def add_comment_by_msisdn(data: CommentRequest = Query(), msisdn: str = Depends(verify_access_token)):
     return add_comment(msisdn=msisdn, case_id=data.case_id, comment=data.comment, upload_file=data.upload_file)
 
-@router.post("/cab/teznet/add-device/")
+@router.post("/teznet/add-device/")
 def add_device_by_msisdn(data: DeviceRequest = Query(), msisdn: str = Depends(verify_access_token)):
     return add_device(msisdn=msisdn, phone=data.phone, device=data.device, 
                       ssid=data.ssid, patch_cord=data.patch_cord, drop_cabel=data.drop_cabel
@@ -45,24 +45,24 @@ def add_device_by_msisdn(data: DeviceRequest = Query(), msisdn: str = Depends(ve
 def delete_device(data: DelDeviceRequest = Query(), msisdn: str = Depends(verify_access_token)):
     return del_device(msisdn=msisdn, phone=data.phone, case_id=data.case_id)
 
-@router.post("/cab/teznet/find-subs/")
+@router.post("/teznet/find-subs/")
 def find_subs_by_msisdn(data: FindSubsRequest = Query(), msisdn: str = Depends(verify_access_token)):
     return find_subs(msisdn=msisdn, fmsisdn=data.fmsisdn)
 
-@router.post("/cab/teznet/req-detail/")
+@router.post("/teznet/req-detail/")
 def request_detail(data: ReqDetailRequest = Form(), msisdn: str = Depends(verify_access_token)):
     return post_requests_detail(msisdn=msisdn, case_id=data.case_id)
 
-@router.post("/cab/teznet/change-req-user/")
+@router.post("/teznet/change-req-user/")
 def request_user(data: ReqUserRequest = Query(), msisdn: str = Depends(verify_access_token)):
     return req_user(msisdn=msisdn, case_id=data.case_id, new_user_id=data.new_user_id)
 
-@router.post("/cab/teznet/change-req-status/")
+@router.post("/teznet/change-req-status/")
 def request_status(data: ReqStatusRequest = Query(), msisdn: str = Depends(verify_access_token)):
     return req_status(msisdn=msisdn, case_id=data.case_id, new_stat_id=data.new_stat_id)
 
 
-@router.post("/cab/teznet/add-document/")
+@router.post("/teznet/add-document/")
 async def add_document_(
                         data: AddDocumentRequest = Query(), 
                         db: oracledb.AsyncConnection = Depends(get_db_conn), 
