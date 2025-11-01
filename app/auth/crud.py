@@ -9,7 +9,6 @@ from auth.utils.utils   import generate_access, generate_refresh, decode, genera
 
 def auth_otp(msisdn: str, db: Session):
     otp = generate_otp(msisdn)
-    print('-------otp-->', otp)
     stt = SttToken(stt=generate_stt(otp))
     
     new_record = AuthHistory(

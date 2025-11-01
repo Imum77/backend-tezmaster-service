@@ -24,11 +24,11 @@ def get_requests(msisdn, offset=0, limit=50):
 
 
         url = "http://10.84.33.83/gpon/cch/view.php?action=get_requests&customer_msisdn="+msisdn+"&offset="+str(offset)+"&limit="+str(limit)
-        print('url ', url)
+
         payload={}
         headers = {}
         response = requests.request("POST", url, headers=headers, data = payload)
-        print('resss-->', response)
+
         res=response.json()
         return res
 

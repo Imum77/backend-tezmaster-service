@@ -22,9 +22,9 @@ def get_user_by_msisdn(msisdn: str = Depends(verify_access_token)):
 @router.get("/teznet/teznet-requests/")
 def get_requests_by_msisdn(
         data: RequestRequest = Query(...),
-        # msisdn: str = Depends(verify_access_token)
+        msisdn: str = Depends(verify_access_token)
     ):
-    msisdn = '992700017000'
+    # msisdn = '992700017000'
     return get_requests(msisdn=msisdn, limit=data.limit, offset=data.offset)
 
 @router.get("/cab/teznet/teznet-status/")
@@ -41,7 +41,7 @@ def add_device_by_msisdn(data: DeviceRequest = Query(), msisdn: str = Depends(ve
                       ssid=data.ssid, patch_cord=data.patch_cord, drop_cabel=data.drop_cabel
                     )
 
-@router.post("/cab/teznet/del-device/")
+@router.post("/teznet/del-device/")
 def delete_device(data: DelDeviceRequest = Query(), msisdn: str = Depends(verify_access_token)):
     return del_device(msisdn=msisdn, phone=data.phone, case_id=data.case_id)
 
