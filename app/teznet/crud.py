@@ -117,7 +117,6 @@ def post_requests_detail(msisdn, case_id):
             
             response = requests.request('POST', url, headers=headers, data=payload)
             res = response.json()
-            print('--->', res)
             return res
     except:
         return {

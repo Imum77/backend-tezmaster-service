@@ -10,6 +10,6 @@ app = FastAPI(
     debug=True
 )
 
-app.include_router(auth_router, tags=["auth"]  , prefix='/api/v3')
-app.include_router(teznet_router, tags=["cab"] , prefix='/api/v3')
+app.include_router(auth_router, tags=["Authorization"]  , prefix='/api/v3')
+app.include_router(teznet_router, tags=["TezNet"] , prefix='/api/v3')
 

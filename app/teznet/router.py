@@ -24,7 +24,6 @@ def get_requests_by_msisdn(
         data: RequestRequest = Query(...),
         msisdn: str = Depends(verify_access_token)
     ):
-    # msisdn = '992700017000'
     return get_requests(msisdn=msisdn, limit=data.limit, offset=data.offset)
 
 @router.get("/teznet/teznet-status/")
@@ -52,10 +51,9 @@ def find_subs_by_msisdn(data: FindSubsRequest = Query(), msisdn: str = Depends(v
 @router.post("/teznet/req-detail/")
 async def request_detail(
         data: ReqDetailRequest,
-        # msisdn: str = Depends(verify_access_token),
+        msisdn: str = Depends(verify_access_token),
         
     ):
-    msisdn = '992700017000'
     return post_requests_detail(msisdn=msisdn, case_id=data.case_id)
 
 @router.post("/teznet/change-req-user/")
