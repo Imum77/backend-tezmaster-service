@@ -20,7 +20,11 @@ def get_user_by_msisdn(msisdn: str = Depends(verify_access_token)):
     return get_user(msisdn)
 
 @router.get("/cab/teznet/teznet-requests/")
-def get_requests_by_msisdn(data: RequestRequest = Query(), msisdn: str = Depends(verify_access_token)):
+def get_requests_by_msisdn(
+        data: RequestRequest = Query(),
+        # msisdn: str = Depends(verify_access_token)
+    ):
+    msisdn = '992700017000'
     return get_requests(msisdn=msisdn, limit=data.limit, offset=data.offset)
 
 @router.get("/cab/teznet/teznet-status/")
