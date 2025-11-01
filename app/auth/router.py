@@ -1,4 +1,4 @@
-from fastapi            import APIRouter, Depends, Query, Body, Request
+from fastapi            import APIRouter, Depends, Query, Form
 from typing             import List
 from sqlalchemy.orm     import Session
 from db                 import get_db
@@ -11,11 +11,10 @@ router = APIRouter()
 
 
 @router.post("/auth/otp")
-async def get_auth_otp(request: Request,  db: Session = Depends(get_db)):
-    raw_body = await request.body()
-    print("RAW BODY:", raw_body, raw_body.decode())
+async def get_auth_otp(phone: str = Form(...),  db: Session = Depends(get_db)):
+
     return auth_otp(
-        msisdn='992777003304',
+        msisdn=phone,
         db=db
     )
 
