@@ -2,7 +2,7 @@ from fastapi            import APIRouter, Depends, Query, Body
 from typing             import List
 from sqlalchemy.orm     import Session
 from db                 import get_db
-from auth.schemas       import Verify, VerifyResponse,  AuthHistoryResponse, LogoutResponse
+from auth.schemas       import Verify, VerifyResponse,  AuthHistoryResponse, LogoutResponse, OtpSchema
 from auth.crud          import get_auth_history_db, auth_verify, auth_otp, deactivate_user
 from auth.utils.utils   import verify_access_token
 
@@ -11,9 +11,9 @@ router = APIRouter()
 
 
 @router.post("/auth/otp")
-def get_auth_otp(phone: str = Body(min_length=12, max_length=12), db: Session = Depends(get_db)):
+def get_auth_otp(data: OtpSchema, db: Session = Depends(get_db)):
     return auth_otp(
-        msisdn=phone,
+        msisdn=data.phone,
         db=db
     )
 

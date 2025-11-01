@@ -3,6 +3,9 @@ from typing     import Optional, Literal
 from datetime   import datetime
 
 
+class OtpSchema(BaseModel):
+    phone: str
+
 class SttToken(BaseModel):
     stt: Optional[str] = None
 
