@@ -19,8 +19,8 @@ class Verify(BaseModel):
 
 
 class TokenSchema(BaseModel):
-    access_token: str
-    refresh_token: str
+    access_token: str = Field(serialization_alias='access-token')
+    refresh_token: str = Field(serialization_alias='refresh')
     
 
 class VerifyResponse(BaseModel):
