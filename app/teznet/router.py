@@ -51,12 +51,10 @@ def find_subs_by_msisdn(data: FindSubsRequest = Query(), msisdn: str = Depends(v
 
 @router.post("/teznet/req-detail/")
 async def request_detail(
-        r: Request,
-        # data: ReqDetailRequest = Form(),
+        data: ReqDetailRequest,
         msisdn: str = Depends(verify_access_token),
         
     ):
-    print(await r.body())
     msisdn = '992700017000'
     return post_requests_detail(msisdn=msisdn, case_id=1)
 
