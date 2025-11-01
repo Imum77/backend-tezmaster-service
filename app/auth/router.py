@@ -1,4 +1,4 @@
-from fastapi            import APIRouter, Depends, Query, Form
+from fastapi            import APIRouter, Depends, Query, Form, Request
 from typing             import List
 from sqlalchemy.orm     import Session
 from db                 import get_db
@@ -12,7 +12,6 @@ router = APIRouter()
 
 @router.post("/auth/otp")
 async def get_auth_otp(phone: str = Form(...),  db: Session = Depends(get_db)):
-
     return auth_otp(
         msisdn=phone,
         db=db
@@ -20,7 +19,8 @@ async def get_auth_otp(phone: str = Form(...),  db: Session = Depends(get_db)):
 
 
 @router.post("/auth/verify", response_model=VerifyResponse)
-def get_auth_verify(request: Verify, db: Session = Depends(get_db)):
+async def get_auth_verify(request: Request, db: Session = Depends(get_db)):
+    print(await request.body())
     return auth_verify(
         db=db,
         phone=request.phone,

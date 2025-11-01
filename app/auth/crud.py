@@ -26,7 +26,6 @@ def auth_otp(msisdn: str, db: Session):
     db.add(new_record)
     db.commit()
     db.refresh(new_record)
-    print()
     return  AuthOtpResponse(
         data=stt
     )
