@@ -1,0 +1,31 @@
+version: '3.8'
+
+services:
+  app:
+    build: .
+    command:  uvicorn main:app --host 0.0.0.0 --port 8000 
+    volumes:
+      - ./app:/app
+      
+    restart: unless-stopped
+    ports:
+      - "8000:8000"
+
+
+    environment:
+      - TZ=Asia/Ashgabat
+      # - no_proxy=10.84.159.2,10.84.27.6
+
+  db:
+    image: mysql:8.0
+    restart: always
+    environment:
+      MYSQL_ROOT_PASSWORD: my_tcell_lite_pAssW0rd
+      # http_proxy: http://10.84.142.62:3128
+      # https_proxy: http://10.84.142.62:3128
+      # no_proxy: 10.84.159.2
+    ports:
+      - "3306:3306"
+    volumes:
+      - ./database/mysql_data:/var/lib/mysql
+      - ./database/dump:/backup
