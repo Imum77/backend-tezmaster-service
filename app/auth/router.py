@@ -13,7 +13,7 @@ router = APIRouter()
 @router.post("/auth/otp")
 async def get_auth_otp(request: Request,  db: Session = Depends(get_db)):
     raw_body = await request.body()
-    print("RAW BODY:", raw_body)
+    print("RAW BODY:", raw_body, raw_body.decode())
     return auth_otp(
         msisdn='992777003304',
         db=db
