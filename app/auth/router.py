@@ -19,8 +19,7 @@ async def get_auth_otp(phone: str = Form(...),  db: Session = Depends(get_db)):
 
 
 @router.post("/auth/verify", response_model=VerifyResponse)
-async def get_auth_verify(request: Request, db: Session = Depends(get_db)):
-    print(await request.body())
+def get_auth_verify(request: Verify = Form(...), db: Session = Depends(get_db)):
     return auth_verify(
         db=db,
         phone=request.phone,
