@@ -25,7 +25,7 @@ services:
       # https_proxy: http://10.84.142.62:3128
       # no_proxy: 10.84.159.2
     ports:
-      - "3306:3306"
+      - "3336:3306"
     volumes:
       - ./database/mysql_data:/var/lib/mysql
       - ./database/dump:/backup

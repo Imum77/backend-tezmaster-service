@@ -7,6 +7,7 @@ app = FastAPI(
     title="GPON API",
     description="API для получения информации о пользователях GPON",
     version="1.0.0",
+    debug=True
 )
 
 app.include_router(auth_router, tags=["auth"]  , prefix='/api/v3')
