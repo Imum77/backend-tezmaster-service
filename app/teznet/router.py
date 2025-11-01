@@ -1,5 +1,5 @@
 import oracledb
-from fastapi            import APIRouter, Query, Depends
+from fastapi            import APIRouter, Query, Depends, Form
 from db                 import get_db_conn
 from teznet.crud        import (
                             get_user, get_requests, get_history, add_comment, add_device, 
@@ -50,7 +50,7 @@ def find_subs_by_msisdn(data: FindSubsRequest = Query(), msisdn: str = Depends(v
     return find_subs(msisdn=msisdn, fmsisdn=data.fmsisdn)
 
 @router.post("/cab/teznet/req-detail/")
-def request_detail(data: ReqDetailRequest = Query(), msisdn: str = Depends(verify_access_token)):
+def request_detail(data: ReqDetailRequest = Form(), msisdn: str = Depends(verify_access_token)):
     return post_requests_detail(msisdn=msisdn, case_id=data.case_id)
 
 @router.post("/cab/teznet/change-req-user/")
