@@ -28,8 +28,8 @@ def get_requests(msisdn, offset=0, limit=50):
         payload={}
         headers = {}
         response = requests.request("POST", url, headers=headers, data = payload)
+        print('resss-->', response)
         res=response.json()
-        print('resss-->', res)
         return res
 
     except:
