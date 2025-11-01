@@ -56,7 +56,7 @@ def generate_otp(p_msisdn):
     return otp_value
 
 
-def verify_access_token(authorization: Optional[str] = Header(default=None, alias='Authorization')):
+def verify_access_token(authorization: Optional[str] = Header(default=None, alias='access-token')):
     token = authorization.strip()
     try:
         payload = jwt.decode(token, conf.SECRET_KEY, algorithms=["HS256"])
