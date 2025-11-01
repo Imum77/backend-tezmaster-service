@@ -1,8 +1,8 @@
 from pydantic import BaseModel, Field
 from typing import Optional
 class RequestRequest(BaseModel):
-    offset  : Optional[str] = 0
-    limit   : Optional[str] = 50
+    offset  : Optional[str] = None
+    limit   : Optional[str] = None
 
 
 class StatusRequest(BaseModel):
