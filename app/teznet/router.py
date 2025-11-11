@@ -15,7 +15,7 @@ from auth.utils.utils   import verify_access_token
 router = APIRouter()
 
 
-@router.get("/teznet/get_user")
+@router.get("/teznet/get_user/")
 def get_user_by_msisdn(msisdn: str = Depends(verify_access_token)):
     return get_user(msisdn)
 
@@ -30,7 +30,7 @@ def get_requests_by_msisdn(
 def get_status_by_msisdn(msisdn: str = Depends(verify_access_token)):
     return get_history(msisdn=msisdn)
 
-@router.post("/teznet/add-comment")
+@router.post("/teznet/add-comment/")
 def add_comment_by_msisdn(data: CommentRequest = Query(), msisdn: str = Depends(verify_access_token)):
     return add_comment(msisdn=msisdn, case_id=data.case_id, comment=data.comment, upload_file=data.upload_file)
 

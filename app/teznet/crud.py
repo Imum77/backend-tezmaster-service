@@ -17,7 +17,7 @@ def get_user(msisdn: str):
             "message":"loyalty.db.history.get_history -> " + str(sys.exc_info()[1])
             }
     
-def get_requests(msisdn, offset=0, limit=50):
+def get_requests(msisdn, offset=0, limit=15):
     try:
         print('offset ', offset)
         print('limit ', limit)
