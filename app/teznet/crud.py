@@ -28,7 +28,6 @@ def get_requests(msisdn, offset, limit):
         payload={}
         headers = {}
         response = requests.request("POST", url, headers=headers, data = payload)
-
         res=response.json()
         return res
 
