@@ -1,4 +1,5 @@
-from fastapi    import Header, HTTPException
+from fastapi    import Header, HTTPException, status
+from fastapi.responses import JSONResponse
 from jose       import JWTError
 import jwt
 import conf as conf
@@ -70,3 +71,21 @@ def verify_access_token(authorization: Optional[str] = Header(default=None, alia
         return phone
     except JWTError:
         raise HTTPException(status_code=401, detail="Invalid or expired token")
+
+
+def filtering(res):
+    if res is not None and 'un_authorized' in res.keys():
+        return JSONResponse(
+            content={"message": "Not authorized"},
+            status_code=status.HTTP_401_UNAUTHORIZED
+        )
+    elif 'status' in res.keys() and res['status'] == 'error':
+        return JSONResponse(
+            content={"message": "Server error"},
+            status_code=status.HTTP_500_INTERNAL_SERVER_ERROR
+        )
+    else:
+        return JSONResponse(
+            content=res,
+            status_code=status.HTTP_200_OK
+        )

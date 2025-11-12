@@ -12,6 +12,8 @@ from teznet.schemas     import (RequestRequest, StatusRequest, CommentRequest, D
                         )
 from auth.utils.utils   import verify_access_token
 
+from auth.utils.utils import filtering
+
 router = APIRouter()
 
 
@@ -54,7 +56,8 @@ async def request_detail(
         msisdn: str = Depends(verify_access_token),
         
     ):
-    return post_requests_detail(msisdn=msisdn, case_id=data.case_id)
+    res = post_requests_detail(msisdn=msisdn, case_id=data.case_id)
+    return filtering(res)
 
 @router.post("/teznet/change-req-user/")
 def request_user(data: ReqUserRequest = Query(), msisdn: str = Depends(verify_access_token)):
