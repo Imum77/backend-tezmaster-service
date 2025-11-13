@@ -51,7 +51,7 @@ from typing import Optional
 def generate_otp(p_msisdn):
     '''for genereting and sendig sms to clients
     '''
-    otp_value = str(random.randint(10000, 99999))
+    otp_value = str(random.randint(100000, 999999))
     sendSMS(p_msisdn, otp_value)
     print('------------------>', otp_value)
     return otp_value
