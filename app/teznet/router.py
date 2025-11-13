@@ -17,11 +17,23 @@ from auth.utils.utils import filtering
 router = APIRouter()
 
 
+import traceback
+from fastapi import HTTPException
+
 @router.get("/teznet/get_user/")
 def get_user_by_msisdn(msisdn: str = Depends(verify_access_token)):
-    print("-------------------------->", msisdn)
-    res = get_user(msisdn = msisdn)
-    return filtering(res)
+    try:
+        print("🔹 Запрос на /teznet/get_user/ с msisdn:", msisdn)
+        res = get_user(msisdn=msisdn)
+        print("🔹 Результат get_user:", res)
+        result = filtering(res)
+        print("🔹 Результат filtering:", result)
+        return result
+    except Exception as e:
+        print("❌ Ошибка в get_user_by_msisdn:")
+        traceback.print_exc()   # покажет стек ошибки в консоли
+        raise HTTPException(status_code=500, detail=str(e))
+
 
 @router.get("/teznet/teznet-requests/")
 def get_requests_by_msisdn(
