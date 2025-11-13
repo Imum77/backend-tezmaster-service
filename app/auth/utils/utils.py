@@ -2,6 +2,10 @@ from fastapi    import Header, HTTPException, status
 from fastapi.responses import JSONResponse
 from jose       import JWTError
 import jwt
+import random
+from auth.utils.kannelSMS import sendSMS
+from fastapi import Header
+from typing import Optional
 import conf as conf
 from datetime   import datetime, timedelta, timezone
 
@@ -41,17 +45,11 @@ def decode(token: str):
     except:
         return {"success":False, "status":"error", "message":"Invalid token"}
 
-import random
-
-from auth.utils.kannelSMS import sendSMS
-from fastapi import Header
-from typing import Optional
-
 
 def generate_otp(p_msisdn):
     '''for genereting and sendig sms to clients
     '''
-    otp_value = str(random.randint(100000, 999999))
+    otp_value = str(random.randint(10000, 99999))
     sendSMS(p_msisdn, otp_value)
     print('------------------>', otp_value)
     return otp_value
