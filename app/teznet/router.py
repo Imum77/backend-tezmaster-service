@@ -19,7 +19,8 @@ router = APIRouter()
 
 @router.get("/teznet/get_user/")
 def get_user_by_msisdn(msisdn: str = Depends(verify_access_token)):
-    return get_user(msisdn)
+    res = get_user(msisdn = msisdn)
+    return filtering(res)
 
 @router.get("/teznet/teznet-requests/")
 def get_requests_by_msisdn(
