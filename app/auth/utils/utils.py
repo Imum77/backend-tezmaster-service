@@ -1,4 +1,5 @@
-from fastapi    import Header, HTTPException, status
+from fastapi    import Header, HTTPException, Response, status
+import json
 from fastapi.responses import JSONResponse
 from jose       import JWTError
 import jwt
@@ -69,21 +70,36 @@ def verify_access_token(authorization: Optional[str] = Header(default=None, alia
         return phone
     except JWTError:
         raise HTTPException(status_code=401, detail="Invalid or expired token")
+    
+
+def drf_response(data, status_code):
+    """
+    Полностью имитирует Django Rest Framework Response()
+    """
+    return Response(
+        content=json.dumps(data, ensure_ascii=False),
+        status_code=status_code,
+        media_type="application/json",
+        headers={
+            "Vary": "Accept"
+        }
+    )
 
 
 def filtering(res):
+    # Not authorized
     if res is not None and 'un_authorized' in res.keys():
-        return JSONResponse(
-            content={"message": "Not authorized"},
-            status_code=status.HTTP_401_UNAUTHORIZED
+        return drf_response(
+            {"message": "Not authorized"},
+            status.HTTP_401_UNAUTHORIZED
         )
+
+    # Internal server error
     elif 'status' in res.keys() and res['status'] == 'error':
-        return JSONResponse(
-            content={"message": "Server error"},
-            status_code=status.HTTP_500_INTERNAL_SERVER_ERROR
+        return drf_response(
+            {"message": "Server error"},
+            status.HTTP_500_INTERNAL_SERVER_ERROR
         )
-    else:
-        return JSONResponse(
-            content=res,
-            status_code=status.HTTP_200_OK
-        )
+
+    # Success
+    return drf_response(res, status.HTTP_200_OK)
