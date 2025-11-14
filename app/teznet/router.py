@@ -6,14 +6,14 @@ from teznet.crud        import (
                             find_subs, post_requests_detail, del_device, req_user, req_status,
                             add_document
                         )
-from teznet.schemas     import (RequestRequest, StatusRequest, CommentRequest, DeviceRequest, 
+from teznet.schemas     import (RequestRequest, CommentRequest, DeviceRequest, 
                            FindSubsRequest, ReqDetailRequest, DelDeviceRequest, ReqUserRequest, 
                            ReqStatusRequest, AddDocumentRequest
                         )
 from auth.utils.utils   import verify_access_token
 
 from auth.utils.utils import filtering
-from fastapi import Body
+
 
 router = APIRouter()
 
@@ -56,8 +56,8 @@ def find_subs_by_msisdn(data: FindSubsRequest = Query(...), msisdn: str = Depend
 
 @router.post("/teznet/req-detail/")
 async def request_detail(
+        data: ReqDetailRequest,
         msisdn: str = Depends(verify_access_token),
-        data: ReqDetailRequest = Query(...),
         
     ):
     res = post_requests_detail(msisdn=msisdn, case_id=data.case_id)
