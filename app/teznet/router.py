@@ -23,7 +23,7 @@ def get_user_by_msisdn(msisdn: str = Depends(verify_access_token)):
     return filtering(res)
 
 @router.get("/teznet/teznet-requests/")
-def get_requests_by_msisdn(
+def get_requests_by_msisdn(  
         data: RequestRequest = Query(...),
         msisdn: str = Depends(verify_access_token)
     ):
