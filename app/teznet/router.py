@@ -19,7 +19,7 @@ router = APIRouter()
 
 
 @router.get("/teznet/get_user/")
-def get_user_by_msisdn(request, msisdn: str = Depends(verify_access_token)):
+def get_user_by_msisdn(msisdn: str = Depends(verify_access_token)):
     res = get_user(msisdn = msisdn)
     return filtering(res)
 
@@ -41,23 +41,23 @@ def add_comment_by_msisdn(data: CommentRequest = Query(...), msisdn: str = Depen
     return add_comment(msisdn=msisdn, case_id=data.case_id, comment=data.comment, upload_file=data.upload_file)
 
 @router.post("/teznet/add-device/")
-def add_device_by_msisdn(data: DeviceRequest = Query(), msisdn: str = Depends(verify_access_token)):
+def add_device_by_msisdn(data: DeviceRequest = Query(...), msisdn: str = Depends(verify_access_token)):
     return add_device(msisdn=msisdn, phone=data.phone, device=data.device, 
                       ssid=data.ssid, patch_cord=data.patch_cord, drop_cabel=data.drop_cabel
                     )
 
 @router.post("/teznet/del-device/")
-def delete_device(data: DelDeviceRequest = Query(), msisdn: str = Depends(verify_access_token)):
+def delete_device(data: DelDeviceRequest = Query(...), msisdn: str = Depends(verify_access_token)):
     return del_device(msisdn=msisdn, phone=data.phone, case_id=data.case_id)
 
 @router.post("/teznet/find-subs/")
-def find_subs_by_msisdn(data: FindSubsRequest = Query(), msisdn: str = Depends(verify_access_token)):
+def find_subs_by_msisdn(data: FindSubsRequest = Query(...), msisdn: str = Depends(verify_access_token)):
     return find_subs(msisdn=msisdn, fmsisdn=data.fmsisdn)
 
 @router.post("/teznet/req-detail/")
 async def request_detail(
         msisdn: str = Depends(verify_access_token),
-        data: ReqDetailRequest = Body(...),
+        data: ReqDetailRequest = Form(...),
         
     ):
     res = post_requests_detail(msisdn=msisdn, case_id=data.case_id)
