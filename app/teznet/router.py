@@ -13,14 +13,14 @@ from teznet.schemas     import (RequestRequest, StatusRequest, CommentRequest, D
 from auth.utils.utils   import verify_access_token
 
 from auth.utils.utils import filtering
+from fastapi import Body
 
 router = APIRouter()
 
 
 @router.get("/teznet/get_user/")
-def get_user_by_msisdn(msisdn: str = Depends(verify_access_token)):
+def get_user_by_msisdn(request, msisdn: str = Depends(verify_access_token)):
     res = get_user(msisdn = msisdn)
-    print("-------------------->", res)
     return filtering(res)
 
 @router.get("/teznet/teznet-requests/")
@@ -28,14 +28,16 @@ def get_requests_by_msisdn(
         data: RequestRequest = Query(...),
         msisdn: str = Depends(verify_access_token)
     ):
-    return get_requests(msisdn=msisdn, limit=data.limit, offset=data.offset)
+    res = get_requests(msisdn=msisdn, limit=data.limit, offset=data.offset)
+    return filtering(res)
 
 @router.get("/teznet/teznet-status/")
 def get_status_by_msisdn(msisdn: str = Depends(verify_access_token)):
-    return get_history(msisdn=msisdn)
+    res = get_history(msisdn=msisdn)
+    return filtering(res)
 
 @router.post("/teznet/add-comment/")
-def add_comment_by_msisdn(data: CommentRequest = Query(), msisdn: str = Depends(verify_access_token)):
+def add_comment_by_msisdn(data: CommentRequest = Query(...), msisdn: str = Depends(verify_access_token)):
     return add_comment(msisdn=msisdn, case_id=data.case_id, comment=data.comment, upload_file=data.upload_file)
 
 @router.post("/teznet/add-device/")
@@ -54,8 +56,8 @@ def find_subs_by_msisdn(data: FindSubsRequest = Query(), msisdn: str = Depends(v
 
 @router.post("/teznet/req-detail/")
 async def request_detail(
-        data: ReqDetailRequest,
         msisdn: str = Depends(verify_access_token),
+        data: ReqDetailRequest = Body(...),
         
     ):
     res = post_requests_detail(msisdn=msisdn, case_id=data.case_id)
