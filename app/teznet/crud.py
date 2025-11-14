@@ -4,7 +4,6 @@ from fastapi import HTTPException
 def get_user(msisdn: str):
     try:
         url = f"http://10.84.33.83/gpon/cch/view.php?action=get_users&customer_msisdn={msisdn}"
-        print("-----------> url", url)
         payload={}
         headers = {}
 
