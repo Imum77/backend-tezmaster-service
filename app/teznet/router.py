@@ -43,7 +43,7 @@ def get_status_by_msisdn(msisdn: str = Depends(verify_access_token)):
     return res
 
 @router.post("/teznet/add-comment/")
-def add_comment_by_msisdn(data: CommentRequest, msisdn: str = Depends(verify_access_token)):
+def add_comment_by_msisdn(data: CommentRequest = Form(...), msisdn: str = Depends(verify_access_token)):
     return add_comment(msisdn=msisdn, case_id=data.case_id, comment=data.comment, upload_file=data.upload_file)
 
 @router.post("/teznet/add-device/")
