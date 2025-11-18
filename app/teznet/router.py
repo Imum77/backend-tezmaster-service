@@ -40,10 +40,10 @@ def get_requests_by_msisdn(
 @router.get("/teznet/teznet-status/")
 def get_status_by_msisdn(msisdn: str = Depends(verify_access_token)):
     res = get_history(msisdn=msisdn)
-    return filtering(res)
+    return res
 
 @router.post("/teznet/add-comment/")
-def add_comment_by_msisdn(data: CommentRequest = Query(...), msisdn: str = Depends(verify_access_token)):
+def add_comment_by_msisdn(data: CommentRequest, msisdn: str = Depends(verify_access_token)):
     return add_comment(msisdn=msisdn, case_id=data.case_id, comment=data.comment, upload_file=data.upload_file)
 
 @router.post("/teznet/add-device/")
@@ -67,7 +67,7 @@ async def request_detail(
         
     ):
     res = post_requests_detail(msisdn=msisdn, case_id=data.case_id)
-    return filtering(res)
+    return res
 
 @router.post("/teznet/change-req-user/")
 def request_user(data: ReqUserRequest = Query(), msisdn: str = Depends(verify_access_token)):
