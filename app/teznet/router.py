@@ -27,7 +27,7 @@ def get_user_by_msisdn(msisdn: str = Depends(verify_access_token)):
     print("RAW RESPONSE:", res)
     print("AS JSON:", json.dumps(res, indent=4, ensure_ascii=False))
 
-    return filtering(res)
+    return res
 
 @router.get("/teznet/teznet-requests/")
 def get_requests_by_msisdn(  
