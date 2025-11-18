@@ -20,7 +20,7 @@ import json
 router = APIRouter()
 
 
-@router.get("/teznet/get_user/")
+@router.get("/teznet/get-user/")
 def get_user_by_msisdn(msisdn: str = Depends(verify_access_token)):
     res = get_user(msisdn = msisdn)
 
