@@ -15,7 +15,7 @@ class StatusRequest(BaseModel):
 class CommentRequest(BaseModel):
     comment          : Optional[str] = None
     upload_file      : Optional[str] = None
-    case_id          : Optional[str] = None
+    case_id          : Optional[int] = ""
 
 
 

@@ -59,16 +59,18 @@ def get_history(msisdn):
 
 def add_comment(msisdn, case_id, comment, upload_file):
     try:
-
-            url = "http://10.84.33.83/gpon/cch/view.php?action=add_comment&case_id="+case_id+"&customer_msisdn="+msisdn+""
+            print(msisdn, case_id, comment, upload_file)
+            url = f"http://10.84.33.83/gpon/cch/view.php?action=add_comment&case_id={case_id}&customer_msisdn={msisdn}"
             payload={'comment': comment,
                     'upload_file': upload_file}
             headers = {}
             
             response = requests.request('POST', url, headers=headers, data=payload)
             res = response.json()
+            print(res)
             return res
-    except:
+    except Exception as e:
+        print(e)
         return {
             "status": "error", 
             "message":"teznet.db.teznet.find_subs -> " + str(sys.exc_info()[1])
