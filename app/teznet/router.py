@@ -1,5 +1,5 @@
 import oracledb
-from fastapi            import APIRouter, Query, Depends, Form, Request
+from fastapi            import APIRouter, Query, Depends, UploadFile, File, Form, Request
 from db                 import get_db_conn
 from teznet.crud        import (
                             get_user, get_requests, get_history, add_comment, add_device, 
@@ -48,9 +48,6 @@ async def add_comment_by_msisdn(data: CommentRequest, msisdn: str = Depends(veri
 
 @router.post("/teznet/add-device/")
 def add_device_by_msisdn(data: DeviceRequest, msisdn: str = Depends(verify_access_token)):
-
-    print("Получено от Pydantic:", data.dict())
-    
     return add_device(msisdn=msisdn, phone=data.phone, device=data.device, 
                       ssid=data.ssid, patch_cord=data.patch_cord, drop_cabel=data.drop_cabel
                     )
@@ -83,7 +80,8 @@ def request_status(data: ReqStatusRequest = Query(), msisdn: str = Depends(verif
 
 @router.post("/teznet/add-document/")
 async def add_document_(
-                        data: AddDocumentRequest = Query(), 
+                        data: AddDocumentRequest, 
+                        upload_file: UploadFile = File(...),
                         db: oracledb.AsyncConnection = Depends(get_db_conn), 
                         msisdn: str = Depends(verify_access_token)
                     ):

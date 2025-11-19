@@ -36,7 +36,7 @@ class ReqDetailRequest(BaseModel):
        case_id  : int
 
 class DelDeviceRequest(BaseModel):
-       phone    : str = Field(min_length=12, max_length=12)
+       phone    : str
        case_id  : str
 
 class ReqUserRequest(BaseModel):
@@ -50,4 +50,3 @@ class ReqStatusRequest(BaseModel):
 class AddDocumentRequest(BaseModel):
        case_id      : str
        comment      : str
-       upload_file  : str
