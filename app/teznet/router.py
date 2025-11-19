@@ -57,7 +57,7 @@ def delete_device(data: DelDeviceRequest = Query(...), msisdn: str = Depends(ver
     return del_device(msisdn=msisdn, phone=data.phone, case_id=data.case_id)
 
 @router.post("/teznet/find-subs/")
-def find_subs_by_msisdn(data: FindSubsRequest = Query(...), msisdn: str = Depends(verify_access_token)):
+def find_subs_by_msisdn(data: FindSubsRequest, msisdn: str = Depends(verify_access_token)):
     return find_subs(msisdn=msisdn, fmsisdn=data.fmsisdn)
 
 @router.post("/teznet/req-detail/")
