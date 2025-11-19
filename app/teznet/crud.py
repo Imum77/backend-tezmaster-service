@@ -41,7 +41,7 @@ def get_requests(msisdn, offset = 0, limit = 15):
 def get_history(msisdn):
     print('------------->', msisdn)
     try:
-        url = "http://10.84.33.83/gpon/cch/view.php?action=get_status&customer_msisdn="+msisdn+""
+        url = f"http://10.84.33.83/gpon/cch/view.php?action=get_status&customer_msisdn={msisdn}"
         payload={}
         headers = {}
 
@@ -79,7 +79,7 @@ def add_comment(msisdn, case_id, comment, upload_file):
 def add_device(msisdn, phone, device, ssid, patch_cord, drop_cabel):
     try:
 
-            url = "http://10.84.33.83/gpon/cch/view.php?action=add_device&msisdn="+phone+"&device_number="+device+"&ssid="+ssid+"&patch_cord="+patch_cord+"&drop_cabel="+drop_cabel+"&customer_msisdn="+msisdn+""
+            url = f"http://10.84.33.83/gpon/cch/view.php?action=add_device&msisdn={phone}&device_number={device}&ssid={ssid}&patch_cord={patch_cord}&drop_cabel={drop_cabel}&customer_msisdn={msisdn}"
             payload=""
             headers = {}
             
@@ -95,7 +95,7 @@ def add_device(msisdn, phone, device, ssid, patch_cord, drop_cabel):
 def find_subs(msisdn, fmsisdn):
     try:
 
-            url = "http://10.84.33.83/gpon/cch/view.php?action=find_subs&customer_msisdn="+msisdn+"&msisdn="+fmsisdn+""
+            url = f"http://10.84.33.83/gpon/cch/view.php?action=find_subs&customer_msisdn={msisdn}&msisdn={fmsisdn}"
             payload={}
             headers = {}
             
@@ -128,7 +128,7 @@ def post_requests_detail(msisdn, case_id):
 
 def del_device(msisdn, phone, case_id):
     try:
-            url = "http://10.84.33.83/gpon/cch/view.php?action=del_device&msisdn="+phone+"&customer_msisdn="+msisdn+"&case_id="+case_id+""
+            url = f"http://10.84.33.83/gpon/cch/view.php?action=del_device&msisdn={phone}&customer_msisdn={msisdn}&case_id={case_id}"
             payload=""
             headers = {}
             
@@ -143,7 +143,7 @@ def del_device(msisdn, phone, case_id):
     
 def req_user(msisdn, case_id, new_user_id):
     try:
-            url = "http://10.84.33.83/gpon/cch/view.php?action=change_req_user&case_id="+case_id+"&new_user_id="+new_user_id+"&customer_msisdn="+msisdn+""
+            url = f"http://10.84.33.83/gpon/cch/view.php?action=change_req_user&case_id={case_id}&new_user_id={new_user_id}&customer_msisdn={msisdn}"
             payload={'case_id': case_id,
                     'new_stat_id': new_user_id}
             headers = {}
@@ -159,7 +159,7 @@ def req_user(msisdn, case_id, new_user_id):
 def req_status(msisdn, case_id, new_stat_id):
     try:
 
-            url = "http://10.84.33.83/gpon/cch/view.php?action=change_req_status&case_id="+case_id+"&new_stat_id="+new_stat_id+"&customer_msisdn="+msisdn+""
+            url = f"http://10.84.33.83/gpon/cch/view.php?action=change_req_status&case_id={case_id}&new_stat_id={new_stat_id}&customer_msisdn={msisdn}"
             payload={'case_id': case_id,
                     'new_stat_id': new_stat_id}
             headers = {}
@@ -183,7 +183,7 @@ async def add_document_cch(url: str, msisdn: str, case_id: int, comment: str, up
 
 async def add_document(db: oracledb.AsyncConnection, msisdn: str, case_id: int, comment: str, upload_file: str):
 
-    url             = "http://10.84.33.83/gpon/cch/view.php?action=add_document&case_id="+case_id+"&customer_msisdn="+msisdn+""
+    url             = f"http://10.84.33.83/gpon/cch/view.php?action=add_document&case_id={case_id}&customer_msisdn={msisdn}"
     response        = await add_document_cch(url, msisdn, case_id, comment, upload_file)
     response_json   = response.json()
     r_err_msg       = response_json.get('err_msg')
