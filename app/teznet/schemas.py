@@ -13,9 +13,9 @@ class StatusRequest(BaseModel):
 
 
 class AddComment(BaseModel):
-    comment: str = Field(..., min_length=1)
-    upload_file: str = Field(..., min_length=1)
-    case_id: str = Field(..., min_length=1)
+    comment          : Optional[str] = None
+    upload_file      : Optional[str] = None
+    case_id          : Optional[str] = None
 
 
 
