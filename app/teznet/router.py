@@ -47,8 +47,10 @@ async def add_comment_by_msisdn(data: CommentRequest, msisdn: str = Depends(veri
     return add_comment(msisdn=msisdn, case_id=data.case_id, comment=data.comment, upload_file=data.upload_file)
 
 @router.post("/teznet/add-device/")
-def add_device_by_msisdn(reuest: Request, data: DeviceRequest, msisdn: str = Depends(verify_access_token)):
-    print(Request.body())
+def add_device_by_msisdn(data: DeviceRequest, msisdn: str = Depends(verify_access_token)):
+
+    print("Получено от Pydantic:", data.dict())
+    
     return add_device(msisdn=msisdn, phone=data.phone, device=data.device, 
                       ssid=data.ssid, patch_cord=data.patch_cord, drop_cabel=data.drop_cabel
                     )
