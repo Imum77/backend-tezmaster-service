@@ -21,10 +21,10 @@ class CommentRequest(BaseModel):
 
 class DeviceRequest(BaseModel):
        phone       : str = Field(min_length=12, max_length=12)
-       device      : str 
-       ssid        : str 
-       patch_cord  : str 
-       drop_cabel  : str
+       ssid        : Optional[str]
+       device      : Optional[str] = None 
+       patch_cord  : Optional[str] = None 
+       drop_cabel  : Optional[str] = None
 
 
 
