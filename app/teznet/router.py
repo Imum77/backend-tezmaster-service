@@ -1,5 +1,5 @@
 import oracledb
-from fastapi            import APIRouter, Query, Depends, UploadFile, File, Form, Request
+from fastapi            import APIRouter, Query, Depends, Form, Request
 from db                 import get_db_conn
 from teznet.crud        import (
                             get_user, get_requests, get_history, add_comment, add_device, 
@@ -76,7 +76,7 @@ def request_status(data: ReqStatusRequest = Query(), msisdn: str = Depends(verif
 
 @router.post("/teznet/add-document/")
 async def add_document_(
-                        data: AddDocumentRequest, 
+                        data: AddDocumentRequest = Form(...), 
                         db: oracledb.AsyncConnection = Depends(get_db_conn), 
                         msisdn: str = Depends(verify_access_token)
                     ):
