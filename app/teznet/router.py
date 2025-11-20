@@ -53,7 +53,7 @@ def add_device_by_msisdn(data: DeviceRequest, msisdn: str = Depends(verify_acces
                     )
 
 @router.post("/teznet/del-device/")
-def delete_device(data: DelDeviceRequest = Query(...), msisdn: str = Depends(verify_access_token)):
+def delete_device(data: DelDeviceRequest, msisdn: str = Depends(verify_access_token)):
     return del_device(msisdn=msisdn, phone=data.phone, case_id=data.case_id)
 
 @router.post("/teznet/find-subs/")
