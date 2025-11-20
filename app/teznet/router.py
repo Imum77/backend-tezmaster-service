@@ -4,7 +4,7 @@ from db                 import get_db_conn
 from teznet.crud        import (
                             get_user, get_requests, get_history, add_comment, add_device, 
                             find_subs, post_requests_detail, del_device, req_user, req_status,
-                            add_document
+                            add_document, add_device_alone
                         )
 from teznet.schemas     import (RequestRequest, CommentRequest, DeviceRequest, 
                            FindSubsRequest, ReqDetailRequest, DelDeviceRequest, ReqUserRequest, 
@@ -44,7 +44,12 @@ async def add_comment_by_msisdn(data: CommentRequest, msisdn: str = Depends(veri
 
 @router.post("/teznet/add-device/")
 def add_device_by_msisdn(data: DeviceRequest, msisdn: str = Depends(verify_access_token)):
-    return add_device(msisdn=msisdn, phone=data.phone, device=data.device, 
+    if msisdn == '992112212222':
+        return add_device_alone(msisdn=msisdn, phone=data.phone, device=data.device, 
+                                ssid=data.ssid, patch_cord=data.patch_cord, drop_cabel=data.drop_cabel
+        )
+    else:               
+        return add_device(msisdn=msisdn, phone=data.phone, device=data.device, 
                       ssid=data.ssid, patch_cord=data.patch_cord, drop_cabel=data.drop_cabel
                     )
 
@@ -81,3 +86,5 @@ async def add_document_(
                         msisdn: str = Depends(verify_access_token)
                     ):
     return await add_document(db, msisdn=msisdn, case_id=data.case_id, comment=data.comment, upload_file=data.upload_file)
+
+

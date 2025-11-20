@@ -206,3 +206,20 @@ async def add_document(db: oracledb.AsyncConnection, msisdn: str, case_id: int, 
     
     finally:
         cursor.close()
+
+def add_device_alone(msisdn, phone, device, ssid, patch_cord, drop_cabel):
+    try:
+
+            url = f"http://10.84.33.83/gpon/cch/view.php?action=add_device_bng_nce&msisdn={phone}&device_number={device}&ssid={ssid}&patch_cord={patch_cord}&drop_cabel={drop_cabel}&customer_msisdn={msisdn}"
+            payload=""
+            headers = {}
+            
+            response = requests.request('POST', url, headers=headers, data=payload)
+            res = response.json()
+            return res
+    except:
+        return {
+            "status": "error", 
+            "message":"teznet.db.teznet.add_device -> " + str(sys.exc_info()[1])
+            }
+    
