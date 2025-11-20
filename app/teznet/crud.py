@@ -199,7 +199,6 @@ async def add_document(db: oracledb.AsyncConnection, msisdn: str, case_id: int, 
         
         if result_code != 0:
              raise HTTPException(status_code=400, detail={'status': 'error', 'message': result_msg})
-        print(response_json)
         return response_json
 
     except oracledb.DatabaseError as e:
