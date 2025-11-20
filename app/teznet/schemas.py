@@ -37,7 +37,7 @@ class ReqDetailRequest(BaseModel):
 
 class DelDeviceRequest(BaseModel):
        phone    : str
-       case_id  : str
+       case_id  : int
 
 class ReqUserRequest(BaseModel):
        case_id      : str
