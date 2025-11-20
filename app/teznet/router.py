@@ -81,7 +81,6 @@ def request_status(data: ReqStatusRequest = Query(), msisdn: str = Depends(verif
 @router.post("/teznet/add-document/")
 async def add_document_(
                         data: AddDocumentRequest, 
-                        upload_file: UploadFile,
                         db: oracledb.AsyncConnection = Depends(get_db_conn), 
                         msisdn: str = Depends(verify_access_token)
                     ):

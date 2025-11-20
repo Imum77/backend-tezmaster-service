@@ -50,3 +50,4 @@ class ReqStatusRequest(BaseModel):
 class AddDocumentRequest(BaseModel):
        case_id      : str
        comment      : str
+       upload_file  : str
