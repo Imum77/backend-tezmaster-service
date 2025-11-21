@@ -73,7 +73,7 @@ def request_user(data: ReqUserRequest = Query(), msisdn: str = Depends(verify_ac
     return req_user(msisdn=msisdn, case_id=data.case_id, new_user_id=data.new_user_id)
 
 @router.post("/teznet/change-req-status/")
-def request_status(data: ReqStatusRequest = Query(), msisdn: str = Depends(verify_access_token)):
+def request_status(data: ReqStatusRequest, msisdn: str = Depends(verify_access_token)):
     return req_status(msisdn=msisdn, case_id=data.case_id, new_stat_id=data.new_stat_id)
 
 
