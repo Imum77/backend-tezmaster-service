@@ -215,28 +215,8 @@ def add_device_alone(msisdn, phone, device, ssid, patch_cord, drop_cabel):
             headers = {}
             
             response = requests.request('POST', url, headers=headers, data=payload)
-                    # --- ДОБАВИЛ ТВОЮ ПРОВЕРКУ ---
-            # 1) Проверка кода ответа
-            if response.status_code != 200:
-                return {
-                "status": "error",
-                "message": f"Ошибка сервера: {response.status_code}",
-                "raw_response": response.text
-            }
-
-            # 2) Проверка, что ответ JSON
-            try:
-                res = response.json()
-            except ValueError:
-                return {
-                "status": "error",
-                "message": "Ответ не является JSON. Возможно, неправильный SSID.",
-                "raw_response": response.text
-            }
-        # --------------------------------
-
+            res = response.json()
             return res
-                # r         
     except:
         return {
             "status": "error", 
