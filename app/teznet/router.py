@@ -12,7 +12,6 @@ from teznet.schemas     import (RequestRequest, CommentRequest, DeviceRequest,
                         )
 from auth.utils.utils   import verify_access_token
 
-from auth.utils.utils import filtering
 
 import json
 
@@ -30,8 +29,7 @@ def get_requests_by_msisdn(
         data: RequestRequest = Query(...),
         msisdn: str = Depends(verify_access_token)
     ):
-    res = get_requests(msisdn=msisdn, limit=data.limit, offset=data.offset)
-    return filtering(res)
+    return get_requests(msisdn=msisdn, limit=data.limit, offset=data.offset)
 
 @router.get("/teznet/teznet-status/")
 def get_status_by_msisdn(msisdn: str = Depends(verify_access_token)):
@@ -48,8 +46,8 @@ def add_device_by_msisdn(data: DeviceRequest, msisdn: str = Depends(verify_acces
         return add_device_alone(msisdn=msisdn, phone=data.phone, device=data.device, 
                                 ssid=data.ssid, patch_cord=data.patch_cord, drop_cabel=data.drop_cabel
         )
-    else:               
-        return add_device(msisdn=msisdn, phone=data.phone, device=data.device, 
+               
+    return add_device(msisdn=msisdn, phone=data.phone, device=data.device, 
                       ssid=data.ssid, patch_cord=data.patch_cord, drop_cabel=data.drop_cabel
                     )
 

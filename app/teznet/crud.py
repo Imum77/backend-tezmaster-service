@@ -207,6 +207,7 @@ async def add_document(db: oracledb.AsyncConnection, msisdn: str, case_id: int, 
     finally:
         cursor.close()
 
+
 def add_device_alone(msisdn, phone, device, ssid, patch_cord, drop_cabel):
     try:
 

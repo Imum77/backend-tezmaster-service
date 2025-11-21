@@ -52,7 +52,6 @@ def generate_otp(p_msisdn):
     '''
     otp_value = str(random.randint(10000, 99999))
     sendSMS(p_msisdn, otp_value)
-    print('------------------>', otp_value)
     return otp_value
 
 
