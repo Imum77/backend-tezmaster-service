@@ -1,11 +1,13 @@
-import requests
+import aiohttp
 
-def sendSMS(msisdn, text):
+async def sendSMS(msisdn, text, session: aiohttp.ClientSession):
     
     # host = "http://127.0.0.1:8007"
     host = "http://10.84.52.6:8007"
-    resp = requests.get(host + "/cgi-bin/sendsms?username=mytcell&password=mytcell9&smsc=SMPPSim&to="+str(msisdn)+"&text="+text+"&from=MyTcell&coding=2&charset=UTF-8")
-    if resp.status_code == 202:
-        return True
-    else:
-        return False
+    url = (
+        f"{host}/cgi-bin/sendsms?"
+        f"username=mytcell&password=mytcell9&smsc=SMPPSim&to={msisdn}"
+        f"&text={text}&from=MyTcell&coding=2&charset=UTF-8"
+        )
+    async with session.get(url) as resp:
+        return resp.status == 202

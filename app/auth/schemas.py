@@ -19,14 +19,14 @@ class Verify(BaseModel):
 
 
 class TokenSchema(BaseModel):
-    access_token: str = Field(serialization_alias='access-token')
-    refresh_token: str = Field(serialization_alias='refresh')
+    access_token    : str = Field(serialization_alias='access-token')
+    refresh_token   : str = Field(serialization_alias='refresh')
     
 
 class VerifyResponse(BaseModel):
-    status: Optional[Literal['success', 'error']] = 'success'
-    message: str = 'Token generated'
-    data: Optional[TokenSchema] = None
+    status  : Optional[Literal['success', 'error']] = 'success'
+    message : str = 'Token generated'
+    data    : Optional[TokenSchema] = None
 
 class AuthOtpResponse(BaseModel):
     status  : Optional[Literal['success', 'error']] = 'success'

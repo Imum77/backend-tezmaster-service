@@ -1,14 +1,15 @@
-from fastapi            import HTTPException
-from sqlalchemy.orm     import Session
-from auth.models        import AuthHistory
-from datetime           import datetime, timedelta
-from auth.schemas       import TokenSchema, VerifyResponse, SttToken, AuthOtpResponse, LogoutResponse
-from auth.utils.utils   import generate_access, generate_refresh, decode, generate_otp, generate_stt
+from fastapi                import HTTPException
+from sqlalchemy.ext.asyncio import AsyncSession
+from sqlalchemy.future      import select
+from auth.models            import AuthHistory
+from datetime               import datetime, timedelta
+from auth.schemas           import TokenSchema, VerifyResponse, SttToken, AuthOtpResponse, LogoutResponse
+from auth.utils.utils       import generate_access, generate_refresh, decode, generate_otp, generate_stt
 
 
 
-def auth_otp(msisdn: str, db: Session):
-    otp = generate_otp(msisdn)
+async def auth_otp(msisdn: str, db: AsyncSession, session):
+    otp = await generate_otp(msisdn, session)
     stt = SttToken(stt=generate_stt(otp))
     
     new_record = AuthHistory(
@@ -24,22 +25,21 @@ def auth_otp(msisdn: str, db: Session):
         device_ip    =  None,
     )
     db.add(new_record)
-    db.commit()
-    db.refresh(new_record)
+    await db.commit()
+    await db.refresh(new_record)
     return  AuthOtpResponse(
         data=stt
     )
 
 
+async def auth_verify(db: AsyncSession, phone: str, otp: str, stt: str ):
 
-def auth_verify(db: Session, phone: str, otp: str, stt: str ):
-
-    record = (
-        db.query(AuthHistory)
-        .filter(AuthHistory.phone == phone)
-        .filter(AuthHistory.otp == otp)
-        .first()
+    result = await db.execute(
+        select(AuthHistory)
+        .where(AuthHistory.phone == phone)
+        .where(AuthHistory.otp == otp)
     )
+    record = result.scalar_one_or_none()
 
     if not record:
         raise HTTPException(status_code=404, detail="OTP not found")
@@ -61,8 +61,8 @@ def auth_verify(db: Session, phone: str, otp: str, stt: str ):
     access_token = generate_access({"sub": record.phone})
     refresh_token = generate_refresh({"sub": record.phone})
 
-    db.commit()
-    db.refresh(record)
+    await db.commit()
+    await db.refresh(record)
 
     tokens =  TokenSchema(
         access_token=access_token,
@@ -74,19 +74,19 @@ def auth_verify(db: Session, phone: str, otp: str, stt: str ):
     )
 
 
-def get_auth_history_db(db: Session, msisdn: str):
-    return db.query(AuthHistory).filter(AuthHistory.phone == msisdn).all()
+async def get_auth_history_db(db: AsyncSession, msisdn: str):
+    result = await db.execute(select(AuthHistory).where(AuthHistory.phone == msisdn))
+    return result.scalars().all()
 
 
-def deactivate_user(msisdn: str, db: Session):
-    auth_history = (
-        db.query(AuthHistory)
-        .filter(AuthHistory.phone == msisdn, AuthHistory.active == True)
-        .first()
-    )
+
+async def deactivate_user(msisdn: str, db: AsyncSession):
+    result = await db.execute(select(AuthHistory).where(AuthHistory.phone == msisdn).where(AuthHistory.active == True))
+    auth_history = result.scalars().first()
 
     if auth_history:
         auth_history.active = False
-        db.commit()
+        await db.commit()
+        await db.refresh(auth_history)
 
     return LogoutResponse

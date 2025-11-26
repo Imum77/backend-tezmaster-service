@@ -1,14 +1,12 @@
-from fastapi    import Header, HTTPException, Response, status
-import json
-from fastapi.responses import JSONResponse
-from jose       import JWTError
+from fastapi                import Header, HTTPException
+from jose                   import JWTError
 import jwt
 import random
-from auth.utils.kannelSMS import sendSMS
-from fastapi import Header
-from typing import Optional
+from auth.utils.kannelSMS   import sendSMS
+from fastapi                import Header
+from typing                 import Optional
 import conf as conf
-from datetime   import datetime, timedelta, timezone
+from datetime               import datetime, timedelta, timezone
 
 
 def generate_refresh(phone: str):
@@ -47,11 +45,12 @@ def decode(token: str):
         return {"success":False, "status":"error", "message":"Invalid token"}
 
 
-def generate_otp(p_msisdn):
+async def generate_otp(p_msisdn, session):
     '''for genereting and sendig sms to clients
     '''
     otp_value = str(random.randint(10000, 99999))
-    sendSMS(p_msisdn, otp_value)
+    print("--------------------->", otp_value)
+    await sendSMS(p_msisdn, otp_value, session)
     return otp_value
 
 
@@ -71,34 +70,4 @@ def verify_access_token(authorization: Optional[str] = Header(default=None, alia
         raise HTTPException(status_code=401, detail="Invalid or expired token")
     
 
-def drf_response(data, status_code):
-    """
-    Полностью имитирует Django Rest Framework Response()
-    """
-    return Response(
-        content=json.dumps(data, ensure_ascii=False),
-        status_code=status_code,
-        media_type="application/json",
-        headers={
-            "Vary": "Accept"
-        }
-    )
 
-
-def filtering(res):
-    # Not authorized
-    if res is not None and 'un_authorized' in res.keys():
-        return drf_response(
-            {"message": "Not authorized"},
-            status.HTTP_401_UNAUTHORIZED
-        )
-
-    # Internal server error
-    elif 'status' in res.keys() and res['status'] == 'error':
-        return drf_response(
-            {"message": "Server error"},
-            status.HTTP_500_INTERNAL_SERVER_ERROR
-        )
-
-    # Success
-    return drf_response(res, status.HTTP_200_OK)

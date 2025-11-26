@@ -1,5 +1,4 @@
-
-from fastapi        import FastAPI, HTTPException
+from fastapi        import FastAPI
 from auth.router    import router as auth_router
 from teznet.router  import router as teznet_router
 
