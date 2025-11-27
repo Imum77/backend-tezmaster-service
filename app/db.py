@@ -1,10 +1,10 @@
 import  logging
 import  oracledb
-from    sqlalchemy.ext.asyncio import  create_async_engine, AsyncSession
-from    sqlalchemy      import create_engine
-from    sqlalchemy.orm  import sessionmaker
-import  conf as conf
 import asyncio
+import  conf as conf
+
+from    sqlalchemy.ext.asyncio  import  create_async_engine, AsyncSession
+from    sqlalchemy.orm          import sessionmaker
 
 
 logger = logging.getLogger(__name__)

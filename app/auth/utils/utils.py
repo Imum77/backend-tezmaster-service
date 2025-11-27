@@ -2,11 +2,12 @@ from fastapi                import Header, HTTPException
 from jose                   import JWTError
 import jwt
 import random
+from datetime               import datetime, timedelta, timezone
+
 from auth.utils.kannelSMS   import sendSMS
 from fastapi                import Header
 from typing                 import Optional
 import conf as conf
-from datetime               import datetime, timedelta, timezone
 
 
 def generate_refresh(phone: str):
