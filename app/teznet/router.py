@@ -3,7 +3,7 @@ from fastapi              import APIRouter, Query, Depends, Form
 import aiohttp
 from db                   import get_db_conn
 from teznet.crud          import (
-                                get_user, get_requests, get_history, add_comment, add_device, 
+                                get_user, get_requests, get_history, add_comment,
                                 find_subs, post_requests_detail, del_device, req_user, req_status,
                                 add_document, add_device_alone
                             )
@@ -65,8 +65,8 @@ async def add_device_by_msisdn(
             msisdn: str = Depends(verify_access_token),
             session: aiohttp.ClientSession = Depends(get_http_session)
         ):
-    if msisdn == '992112212222':
-        res = await add_device_alone(msisdn=msisdn, 
+    # if msisdn == '992112212222':
+    res = await add_device_alone(msisdn=msisdn, 
                                      phone=data.phone, 
                                      device=data.device, 
                                      ssid=data.ssid, 
@@ -74,11 +74,9 @@ async def add_device_by_msisdn(
                                      drop_cabel=data.drop_cabel,
                                      session=session
                             )
-        return res
+        # return res
                
-    return await add_device(msisdn=msisdn, phone=data.phone, device=data.device, 
-                      ssid=data.ssid, patch_cord=data.patch_cord, drop_cabel=data.drop_cabel, session=session
-                    )
+    return res
 
 @router.post("/teznet/del-device/")
 async def delete_device(

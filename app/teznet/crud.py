@@ -69,21 +69,21 @@ async def add_comment(session: aiohttp.ClientSession, msisdn, case_id, comment, 
             "message":"teznet.db.teznet.find_subs -> " + str(e)
             }
     
-async def add_device(session: aiohttp.ClientSession, msisdn, phone, device, ssid, patch_cord, drop_cabel):
-    try:
-        url = f"http://10.84.33.83/gpon/cch/view.php?action=add_device&msisdn={phone}&device_number={device}&ssid={ssid}&patch_cord={patch_cord}&drop_cabel={drop_cabel}&customer_msisdn={msisdn}"
-        payload=""
-        headers = {}
+# async def add_device(session: aiohttp.ClientSession, msisdn, phone, device, ssid, patch_cord, drop_cabel):
+#     try:
+#         url = f"http://10.84.33.83/gpon/cch/view.php?action=add_device&msisdn={phone}&device_number={device}&ssid={ssid}&patch_cord={patch_cord}&drop_cabel={drop_cabel}&customer_msisdn={msisdn}"
+#         payload=""
+#         headers = {}
             
-        async with session.post(url, headers=headers, data=payload) as response:
-            res = await response.json()
-            return res
+#         async with session.post(url, headers=headers, data=payload) as response:
+#             res = await response.json()
+#             return res
     
-    except Exception as e:
-        return {
-            "status": "error", 
-            "message":"teznet.db.teznet.add_device -> " + str(e)
-            }
+#     except Exception as e:
+#         return {
+#             "status": "error", 
+#             "message":"teznet.db.teznet.add_device -> " + str(e)
+#             }
     
 async def find_subs(session: aiohttp.ClientSession, msisdn, fmsisdn):
     try:
