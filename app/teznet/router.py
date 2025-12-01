@@ -112,7 +112,7 @@ async def request_detail(
 
 @router.post("/teznet/change-req-user/")
 async def request_user(
-    data: ReqUserRequest = Query(), 
+    data: ReqUserRequest, 
     msisdn: str = Depends(verify_access_token),
     session: aiohttp.ClientSession = Depends(get_http_session)
     ):
