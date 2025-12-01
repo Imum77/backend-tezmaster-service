@@ -40,8 +40,8 @@ class DelDeviceRequest(BaseModel):
        case_id  : int
 
 class ReqUserRequest(BaseModel):
-       case_id      : str
-       new_user_id  : str
+       case_id      : int
+       new_user_id  : int
 
 class ReqStatusRequest(BaseModel):
        case_id      : str
