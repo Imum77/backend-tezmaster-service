@@ -42,20 +42,29 @@ def get_json_clean(url):
 
 
 async def get_user(msisdn: str, session: aiohttp.ClientSession):
-    try:
-        url = f"http://10.84.33.83/gpon/cch/view.php?action=get_users&customer_msisdn={msisdn}"
-        payload={}
-        headers = {}
+    url = f"http://10.84.33.83/gpon/cch/view.php?action=get_users&customer_msisdn={msisdn}"
+    payload = {}
+    headers = {}
 
+    try:
         async with session.post(url, data=payload, headers=headers) as response:
-            res = await response.json()
-            return res
+            response.raise_for_status()  # выбрасывает исключение при HTTP ошибках 4xx/5xx
+            try:
+                res = await response.json()
+                return res
+            except Exception as e:
+                raise ValueError(f"Invalid JSON received from {url}: {e}")
+
+    except aiohttp.ClientConnectorError:
+        raise ConnectionError(f"Cannot connect to {url}")
+
+    except aiohttp.ClientResponseError as e:
+        raise RuntimeError(f"HTTP error {e.status} on {url}: {e.message}")
 
     except Exception as e:
-        return {
-            "status": "error", 
-            "message":"loyalty.db.history.get_history -> " + str(e)
-            }
+        raise RuntimeError(f"get_user error: {e}")
+    
+    
     
 async def get_requests(session: aiohttp.ClientSession, msisdn, offset = 0, limit = 50):
     try:
@@ -139,19 +148,27 @@ async def find_subs(session: aiohttp.ClientSession, msisdn, fmsisdn):
             }
     
 async def post_requests_detail(session: aiohttp.ClientSession, msisdn, case_id):
+    url = f"http://10.84.33.83/gpon/cch/view.php?action=get_req_detail&case_id={case_id}&customer_msisdn={msisdn}"
+    
     try:
-        url = f"http://10.84.33.83/gpon/cch/view.php?action=get_req_detail&case_id={case_id}&customer_msisdn={msisdn}"
-        payload={}
-        headers = {}
+        async with session.get(url) as response:  # или .post если нужно POST
+            response.raise_for_status()  # выбросит исключение при 4xx/5xx
+            try:
+                data = await response.json()
+                return data
+            except Exception as e:
+                raise ValueError(f"Invalid JSON received from {url}: {e}")
 
-        data = get_json_clean(url)
-        return data
+    except aiohttp.ClientConnectorError:
+        raise ConnectionError(f"Cannot connect to {url}")
+
+    except aiohttp.ClientResponseError as e:
+        raise RuntimeError(f"HTTP error {e.status} on {url}: {e.message}")
 
     except Exception as e:
-        return {
-            "status": "error", 
-            "message":"teznet.db.teznet.request_detail -> " + str(e)
-            }
+        raise RuntimeError(f"post_requests_detail error: {e}")
+    
+
 
 async def del_device(session: aiohttp.ClientSession, msisdn, phone, case_id):
     try:
