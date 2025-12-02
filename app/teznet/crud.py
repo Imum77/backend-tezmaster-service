@@ -3,9 +3,9 @@ import requests, oracledb
 import json
 import aiohttp
 
-def fix_invalid_json(s: str) -> str:
+def sanitize_json_string(s: str) -> str:
     """
-    Исправляет переносы строк и двойные кавычки внутри строк JSON.
+    Экранирует все control characters внутри строк JSON.
     """
     fixed = []
     inside_string = False
@@ -14,15 +14,19 @@ def fix_invalid_json(s: str) -> str:
     while i < len(s):
         ch = s[i]
 
-        # отслеживаем начало/конец строки
         if ch == '"' and (i == 0 or s[i-1] != '\\'):
             inside_string = not inside_string
             fixed.append(ch)
         elif inside_string:
+            # экранируем переносы и control characters
             if ch == '\n':
-                fixed.append("\\n")  # заменяем перенос строки на \n
-            elif ch == '"' and (i == 0 or s[i-1] != '\\'):
-                fixed.append('\\"')  # экранируем кавычки внутри строки
+                fixed.append("\\n")
+            elif ch == '\r':
+                fixed.append("\\r")
+            elif ch == '\t':
+                fixed.append("\\t")
+            elif ord(ch) < 32:
+                fixed.append(" ")  # заменяем остальные control characters пробелом
             else:
                 fixed.append(ch)
         else:
@@ -31,7 +35,6 @@ def fix_invalid_json(s: str) -> str:
         i += 1
 
     return "".join(fixed)
-
 
 def fix_invalid_newlines(s):
     fixed = []
@@ -178,18 +181,25 @@ async def find_subs(session: aiohttp.ClientSession, msisdn, fmsisdn):
     
 
 async def post_requests_detail(session: aiohttp.ClientSession, msisdn, case_id):
+    """
+    Асинхронно делает POST-запрос к серверу для получения деталей заявки.
+    Автоматически очищает "грязный" JSON.
+    """
     url = f"http://10.84.33.83/gpon/cch/view.php?action=get_req_detail&case_id={case_id}&customer_msisdn={msisdn}"
 
     try:
         async with session.post(url) as response:
-            response.raise_for_status()
+            response.raise_for_status()  # выброс при HTTP ошибках 4xx/5xx
             raw_text = await response.text()
-            cleaned_text = fix_invalid_json(raw_text)
+            cleaned_text = sanitize_json_string(raw_text)
+
             try:
                 data = json.loads(cleaned_text)
                 return data
             except json.JSONDecodeError as e:
-                raise ValueError(f"Invalid JSON from {url}: {e}\nBAD PART: {cleaned_text[200:350]}")
+                raise ValueError(
+                    f"Invalid JSON from {url}: {e}\nBAD PART: {cleaned_text[200:350]}"
+                )
 
     except aiohttp.ClientConnectorError:
         raise ConnectionError(f"Cannot connect to {url}")
