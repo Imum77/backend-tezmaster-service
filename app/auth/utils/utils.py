@@ -50,6 +50,7 @@ async def generate_otp(p_msisdn, session):
     '''for genereting and sendig sms to clients
     '''
     otp_value = str(random.randint(10000, 99999))
+    print("---->",otp_value)
     await sendSMS(p_msisdn, otp_value, session)
     return otp_value
 
