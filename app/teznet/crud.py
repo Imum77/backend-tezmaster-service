@@ -41,7 +41,6 @@ def get_json_clean(url):
         raise
 
 
-    
 async def get_user(msisdn: str, session: aiohttp.ClientSession):
     try:
         url = f"http://10.84.33.83/gpon/cch/view.php?action=get_users&customer_msisdn={msisdn}"
@@ -57,7 +56,6 @@ async def get_user(msisdn: str, session: aiohttp.ClientSession):
             "status": "error", 
             "message":"loyalty.db.history.get_history -> " + str(e)
             }
-    
     
 async def get_requests(session: aiohttp.ClientSession, msisdn, offset = 0, limit = 50):
     try:
@@ -146,9 +144,9 @@ async def post_requests_detail(session: aiohttp.ClientSession, msisdn, case_id):
         payload={}
         headers = {}
 
-        async with session.post(url, headers=headers, data=payload) as response:
-            res = await response.json()
-            return res
+        data = get_json_clean(url)
+        return data
+
     except Exception as e:
         return {
             "status": "error", 
