@@ -3,6 +3,46 @@ import requests, oracledb
 import json
 import aiohttp
 
+
+
+
+def fix_invalid_newlines(s):
+    fixed = []
+    inside_string = False
+    i = 0
+
+    while i < len(s):
+        ch = s[i]
+
+        # переключаемся по кавычкам (если они не экранированы)
+        if ch == '"' and (i == 0 or s[i-1] != '\\'):
+            inside_string = not inside_string
+            fixed.append(ch)
+        elif inside_string and ch == '\n':
+            # заменяем сырой перенос строки на \n
+            fixed.append("\\n")
+        else:
+            fixed.append(ch)
+
+        i += 1
+
+    return "".join(fixed)
+
+
+def get_json_clean(url):
+    response = requests.post(url)
+    raw = response.text
+
+    cleaned = fix_invalid_newlines(raw)
+
+    try:
+        return json.loads(cleaned)
+    except json.JSONDecodeError as e:
+        print("JSON ERROR:", e)
+        print("BAD PART:", repr(cleaned[200:350]))
+        raise
+
+
 async def get_user(msisdn: str, session: aiohttp.ClientSession):
     try:
         url = f"http://10.84.33.83/gpon/cch/view.php?action=get_users&customer_msisdn={msisdn}"
@@ -107,9 +147,9 @@ async def post_requests_detail(session: aiohttp.ClientSession, msisdn, case_id):
         payload={}
         headers = {}
 
-        async with session.post(url, headers=headers, data=payload) as response:
-            res = await response.json()
-            return res
+        data = get_json_clean(url)
+        return data
+
     except Exception as e:
         return {
             "status": "error", 
