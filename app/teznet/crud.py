@@ -3,6 +3,35 @@ import requests, oracledb
 import json
 import aiohttp
 
+def fix_invalid_json(s: str) -> str:
+    """
+    Исправляет переносы строк и двойные кавычки внутри строк JSON.
+    """
+    fixed = []
+    inside_string = False
+    i = 0
+
+    while i < len(s):
+        ch = s[i]
+
+        # отслеживаем начало/конец строки
+        if ch == '"' and (i == 0 or s[i-1] != '\\'):
+            inside_string = not inside_string
+            fixed.append(ch)
+        elif inside_string:
+            if ch == '\n':
+                fixed.append("\\n")  # заменяем перенос строки на \n
+            elif ch == '"' and (i == 0 or s[i-1] != '\\'):
+                fixed.append('\\"')  # экранируем кавычки внутри строки
+            else:
+                fixed.append(ch)
+        else:
+            fixed.append(ch)
+
+        i += 1
+
+    return "".join(fixed)
+
 
 def fix_invalid_newlines(s):
     fixed = []
@@ -64,7 +93,7 @@ async def get_user(msisdn: str, session: aiohttp.ClientSession):
     except Exception as e:
         raise RuntimeError(f"get_user error: {e}")
     
-    
+
     
 async def get_requests(session: aiohttp.ClientSession, msisdn, offset = 0, limit = 50):
     try:
@@ -147,24 +176,25 @@ async def find_subs(session: aiohttp.ClientSession, msisdn, fmsisdn):
             "message":"teznet.db.teznet.find_subs -> " + str(e)
             }
     
+
 async def post_requests_detail(session: aiohttp.ClientSession, msisdn, case_id):
     url = f"http://10.84.33.83/gpon/cch/view.php?action=get_req_detail&case_id={case_id}&customer_msisdn={msisdn}"
-    
+
     try:
-        async with session.get(url) as response:  # или .post если нужно POST
-            response.raise_for_status()  # выбросит исключение при 4xx/5xx
+        async with session.post(url) as response:
+            response.raise_for_status()
+            raw_text = await response.text()
+            cleaned_text = fix_invalid_json(raw_text)
             try:
-                data = await response.json()
+                data = json.loads(cleaned_text)
                 return data
-            except Exception as e:
-                raise ValueError(f"Invalid JSON received from {url}: {e}")
+            except json.JSONDecodeError as e:
+                raise ValueError(f"Invalid JSON from {url}: {e}\nBAD PART: {cleaned_text[200:350]}")
 
     except aiohttp.ClientConnectorError:
         raise ConnectionError(f"Cannot connect to {url}")
-
     except aiohttp.ClientResponseError as e:
         raise RuntimeError(f"HTTP error {e.status} on {url}: {e.message}")
-
     except Exception as e:
         raise RuntimeError(f"post_requests_detail error: {e}")
     
