@@ -3,6 +3,45 @@ import requests, oracledb
 import json
 import aiohttp
 
+
+def fix_invalid_newlines(s):
+    fixed = []
+    inside_string = False
+    i = 0
+
+    while i < len(s):
+        ch = s[i]
+
+        # переключаемся по кавычкам (если они не экранированы)
+        if ch == '"' and (i == 0 or s[i-1] != '\\'):
+            inside_string = not inside_string
+            fixed.append(ch)
+        elif inside_string and ch == '\n':
+            # заменяем сырой перенос строки на \n
+            fixed.append("\\n")
+        else:
+            fixed.append(ch)
+
+        i += 1
+
+    return "".join(fixed)
+
+
+def get_json_clean(url):
+    response = requests.post(url)
+    raw = response.text
+
+    cleaned = fix_invalid_newlines(raw)
+
+    try:
+        return json.loads(cleaned)
+    except json.JSONDecodeError as e:
+        print("JSON ERROR:", e)
+        print("BAD PART:", repr(cleaned[200:350]))
+        raise
+
+
+    
 async def get_user(msisdn: str, session: aiohttp.ClientSession):
     try:
         url = f"http://10.84.33.83/gpon/cch/view.php?action=get_users&customer_msisdn={msisdn}"
@@ -208,18 +247,37 @@ async def add_document(
     finally:
         cursor.close()
 
-async def add_device_alone(session: aiohttp.ClientSession, msisdn, phone, device, ssid, patch_cord, drop_cabel):
-    try:
-        url = f"http://10.84.33.83/gpon/cch/view.php?action=add_device_bng_nce&msisdn={phone}&device_number={device}&ssid={ssid}&patch_cord={patch_cord}&drop_cabel={drop_cabel}&customer_msisdn={msisdn}"
-        payload=""
-        headers = {}
+async def add_device_alone(
+    session: aiohttp.ClientSession,
+    msisdn,
+    phone,
+    device,
+    ssid,
+    patch_cord,
+    drop_cabel
+):
+    url = (
+        f"http://10.84.33.83/gpon/cch/view.php?"
+        f"action=add_device_bng_nce&msisdn={phone}&device_number={device}"
+        f"&ssid={ssid}&patch_cord={patch_cord}&drop_cabel={drop_cabel}"
+        f"&customer_msisdn={msisdn}"
+    )
 
-        async with session.post(url, headers=headers, data=payload) as response:
-            res = await response.json()
-            return res
+    try:
+        async with session.post(url) as response:
+            # если код ответа 4xx/5xx → ошибка
+            response.raise_for_status()  
+
+            try:
+                return await response.json()
+            except Exception as e:
+                raise ValueError(f"Invalid JSON received: {e}")
+
+    except aiohttp.ClientConnectorError:
+        raise ConnectionError("Cannot connect to remote service")
+
+    except aiohttp.ClientResponseError as e:
+        raise RuntimeError(f"Bad HTTP response: {e.status} {e.message}")
+
     except Exception as e:
-        return {
-            "status": "error", 
-            "message":"teznet.db.teznet.add_device -> " + str(e)
-            }
-    
+        raise RuntimeError(f"add_device_alone error: {e}")
