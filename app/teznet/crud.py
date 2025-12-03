@@ -18,7 +18,7 @@ def sanitize_json_string(s: str) -> str:
             inside_string = not inside_string
             fixed.append(ch)
         elif inside_string:
-            # экранируем переносы и control characters
+
             if ch == '\n':
                 fixed.append("\\n")
             elif ch == '\r':
@@ -26,7 +26,7 @@ def sanitize_json_string(s: str) -> str:
             elif ch == '\t':
                 fixed.append("\\t")
             elif ord(ch) < 32:
-                fixed.append(" ")  # заменяем остальные control characters пробелом
+                fixed.append(" ")  
             else:
                 fixed.append(ch)
         else:
@@ -36,41 +36,41 @@ def sanitize_json_string(s: str) -> str:
 
     return "".join(fixed)
 
-def fix_invalid_newlines(s):
-    fixed = []
-    inside_string = False
-    i = 0
+# def fix_invalid_newlines(s):
+#     fixed = []
+#     inside_string = False
+#     i = 0
 
-    while i < len(s):
-        ch = s[i]
+#     while i < len(s):
+#         ch = s[i]
 
-        # переключаемся по кавычкам (если они не экранированы)
-        if ch == '"' and (i == 0 or s[i-1] != '\\'):
-            inside_string = not inside_string
-            fixed.append(ch)
-        elif inside_string and ch == '\n':
-            # заменяем сырой перенос строки на \n
-            fixed.append("\\n")
-        else:
-            fixed.append(ch)
+#         # переключаемся по кавычкам (если они не экранированы)
+#         if ch == '"' and (i == 0 or s[i-1] != '\\'):
+#             inside_string = not inside_string
+#             fixed.append(ch)
+#         elif inside_string and ch == '\n':
+#             # заменяем сырой перенос строки на \n
+#             fixed.append("\\n")
+#         else:
+#             fixed.append(ch)
 
-        i += 1
+#         i += 1
 
-    return "".join(fixed)
+#     return "".join(fixed)
 
 
-def get_json_clean(url):
-    response = requests.post(url)
-    raw = response.text
+# def get_json_clean(url):
+#     response = requests.post(url)
+#     raw = response.text
 
-    cleaned = fix_invalid_newlines(raw)
+#     cleaned = fix_invalid_newlines(raw)
 
-    try:
-        return json.loads(cleaned)
-    except json.JSONDecodeError as e:
-        print("JSON ERROR:", e)
-        print("BAD PART:", repr(cleaned[200:350]))
-        raise
+#     try:
+#         return json.loads(cleaned)
+#     except json.JSONDecodeError as e:
+#         print("JSON ERROR:", e)
+#         print("BAD PART:", repr(cleaned[200:350]))
+#         raise
 
 
 async def get_user(msisdn: str, session: aiohttp.ClientSession):
@@ -181,15 +181,11 @@ async def find_subs(session: aiohttp.ClientSession, msisdn, fmsisdn):
     
 
 async def post_requests_detail(session: aiohttp.ClientSession, msisdn, case_id):
-    """
-    Асинхронно делает POST-запрос к серверу для получения деталей заявки.
-    Автоматически очищает "грязный" JSON.
-    """
     url = f"http://10.84.33.83/gpon/cch/view.php?action=get_req_detail&case_id={case_id}&customer_msisdn={msisdn}"
 
     try:
         async with session.post(url) as response:
-            response.raise_for_status()  # выброс при HTTP ошибках 4xx/5xx
+            response.raise_for_status() 
             raw_text = await response.text()
             cleaned_text = sanitize_json_string(raw_text)
 
