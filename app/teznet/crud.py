@@ -46,16 +46,16 @@ async def get_user(msisdn: str, session: aiohttp.ClientSession):
                 res = await response.json()
                 return res
             except Exception as e:
-                raise ValueError(f"Invalid JSON received from {url}: {e}")
+                raise HTTPException(status_code=502, detail=f"Invalid JSON received from {url}: {e}")
 
     except aiohttp.ClientConnectorError:
-        raise ConnectionError(f"Cannot connect to {url}")
+        raise HTTPException(status_code=503, detail=f"Cannot connect to {url}")
 
     except aiohttp.ClientResponseError as e:
-        raise RuntimeError(f"HTTP error {e.status} on {url}: {e.message}")
+        raise HTTPException(status_code=e.status, detail=f"HTTP error {e.status} on {url}: {e.message}")
 
     except Exception as e:
-        raise RuntimeError(f"get_user error: {e}")
+        raise HTTPException(status_code=500, detail=f"get_user error: {e}")
     
 
     
@@ -71,7 +71,7 @@ async def get_requests(session: aiohttp.ClientSession, msisdn, offset=0, limit=5
             return await response.json()
 
     except Exception as e:
-        raise Exception(f"loyalty.db.history.get_history -> {e}")
+        raise HTTPException(status_code=500, detail=f"loyalty.db.history.get_history -> {e}")
 
 
 async def get_history(session: aiohttp.ClientSession, msisdn):
@@ -83,7 +83,8 @@ async def get_history(session: aiohttp.ClientSession, msisdn):
             return await response.json()
 
     except Exception as e:
-        raise Exception(f"loyalty.db.history.get_history -> {e}")
+        raise HTTPException(status_code=500, detail=f"loyalty.db.history.get_history -> {e}")
+
 
 async def add_comment(session: aiohttp.ClientSession, msisdn, case_id, comment, upload_file):
     try:
@@ -102,7 +103,7 @@ async def add_comment(session: aiohttp.ClientSession, msisdn, case_id, comment, 
             return await response.json()
 
     except Exception as e:
-        raise Exception(f"teznet.db.teznet.find_subs -> {e}")  
+        raise HTTPException(status_code=500, detail=f"teznet.db.teznet.find_subs -> {e}")  
 
 # async def add_device(session: aiohttp.ClientSession, msisdn, phone, device, ssid, patch_cord, drop_cabel):
 #     try:
@@ -132,7 +133,7 @@ async def find_subs(session: aiohttp.ClientSession, msisdn, fmsisdn):
             return await response.json()
 
     except Exception as e:
-        raise Exception(f"teznet.db.teznet.find_subs -> {e}")
+        raise HTTPException(status_code=500, detail=f"teznet.db.teznet.find_subs -> {e}")
 
     
 
@@ -149,16 +150,17 @@ async def post_requests_detail(session: aiohttp.ClientSession, msisdn, case_id):
                 data = json.loads(cleaned_text)
                 return data
             except json.JSONDecodeError as e:
-                raise ValueError(
-                    f"Invalid JSON from {url}: {e}\nBAD PART: {cleaned_text[200:350]}"
+                raise HTTPException(
+                    status_code=502,
+                    detail=f"Invalid JSON from {url}: {e}\nBAD PART: {cleaned_text[200:350]}"
                 )
 
     except aiohttp.ClientConnectorError:
-        raise ConnectionError(f"Cannot connect to {url}")
+        raise HTTPException(status_code=503, detail=f"Cannot connect to {url}")
     except aiohttp.ClientResponseError as e:
-        raise RuntimeError(f"HTTP error {e.status} on {url}: {e.message}")
+        raise HTTPException(status_code=e.status, detail=f"HTTP error {e.status} on {url}: {e.message}")
     except Exception as e:
-        raise RuntimeError(f"post_requests_detail error: {e}")
+        raise HTTPException(status_code=500, detail=f"post_requests_detail error: {e}")
     
 
 
@@ -174,7 +176,7 @@ async def del_device(session: aiohttp.ClientSession, msisdn, phone, case_id):
             return await response.json()
 
     except Exception as e:
-        raise Exception(f"teznet.db.teznet.add_device -> {e}")
+        raise HTTPException(status_code=500, detail=f"teznet.db.teznet.add_device -> {e}")
 
 
 async def req_user(session: aiohttp.ClientSession, msisdn, case_id, new_user_id):
@@ -194,7 +196,7 @@ async def req_user(session: aiohttp.ClientSession, msisdn, case_id, new_user_id)
             return await response.json()
 
     except Exception as e:
-        raise Exception(f"teznet.db.teznet.req_status -> {e}")
+        raise HTTPException(status_code=500, detail=f"teznet.db.teznet.req_status -> {e}")
 
 async def req_status(session: aiohttp.ClientSession, msisdn, case_id, new_stat_id):
     try:
@@ -213,7 +215,7 @@ async def req_status(session: aiohttp.ClientSession, msisdn, case_id, new_stat_i
             return await response.json()
 
     except Exception as e:
-        raise Exception(f"teznet.db.teznet.req_status -> {e}")
+        raise HTTPException(status_code=500, detail=f"teznet.db.teznet.req_status -> {e}")
 
 
 async def add_document_cch(
@@ -288,13 +290,13 @@ async def add_device_alone(
             try:
                 return await response.json()
             except Exception as e:
-                raise ValueError(f"Invalid JSON received: {e}")
+                raise HTTPException(status_code=502, detail=f"Invalid JSON received: {e}")
 
     except aiohttp.ClientConnectorError:
-        raise ConnectionError("Cannot connect to remote service")
+        raise HTTPException(status_code=503, detail="Cannot connect to remote service")
 
     except aiohttp.ClientResponseError as e:
-        raise RuntimeError(f"Bad HTTP response: {e.status} {e.message}")
+        raise HTTPException(status_code=e.status, detail=f"Bad HTTP response: {e.status} {e.message}")
 
     except Exception as e:
-        raise RuntimeError(f"add_device_alone error: {e}")
+        raise HTTPException(status_code=500, detail=f"add_device_alone error: {e}")
