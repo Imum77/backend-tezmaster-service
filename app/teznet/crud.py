@@ -98,7 +98,7 @@ async def add_comment(session: aiohttp.ClientSession, msisdn, case_id, comment, 
         }
 
         async with session.post(url, headers={}, data=payload) as response:
-            response.raise_for_status()  # поднимает исключение при HTTP ошибке
+            response.raise_for_status()  
             return await response.json()
 
     except Exception as e:
@@ -190,7 +190,7 @@ async def req_user(session: aiohttp.ClientSession, msisdn, case_id, new_user_id)
         }
 
         async with session.post(url, headers={}, data=payload) as response:
-            response.raise_for_status()  # проброс HTTP ошибок
+            response.raise_for_status()  
             return await response.json()
 
     except Exception as e:
@@ -282,7 +282,7 @@ async def add_device_alone(
 
     try:
         async with session.post(url) as response:
-            # если код ответа 4xx/5xx → ошибка
+
             response.raise_for_status()  
 
             try:
