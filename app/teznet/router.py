@@ -108,7 +108,6 @@ async def request_detail(
         session: aiohttp.ClientSession = Depends(get_http_session)    
     ):
     res = await post_requests_detail(msisdn=msisdn, case_id=data.case_id, session=session)
-    print(res)
     return res
 
 @router.post("/teznet/change-req-user/")

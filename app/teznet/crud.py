@@ -4,9 +4,7 @@ import json
 import aiohttp
 
 def sanitize_json_string(s: str) -> str:
-    """
-    Экранирует все control characters внутри строк JSON.
-    """
+
     fixed = []
     inside_string = False
     i = 0
@@ -36,43 +34,6 @@ def sanitize_json_string(s: str) -> str:
 
     return "".join(fixed)
 
-# def fix_invalid_newlines(s):
-#     fixed = []
-#     inside_string = False
-#     i = 0
-
-#     while i < len(s):
-#         ch = s[i]
-
-#         # переключаемся по кавычкам (если они не экранированы)
-#         if ch == '"' and (i == 0 or s[i-1] != '\\'):
-#             inside_string = not inside_string
-#             fixed.append(ch)
-#         elif inside_string and ch == '\n':
-#             # заменяем сырой перенос строки на \n
-#             fixed.append("\\n")
-#         else:
-#             fixed.append(ch)
-
-#         i += 1
-
-#     return "".join(fixed)
-
-
-# def get_json_clean(url):
-#     response = requests.post(url)
-#     raw = response.text
-
-#     cleaned = fix_invalid_newlines(raw)
-
-#     try:
-#         return json.loads(cleaned)
-#     except json.JSONDecodeError as e:
-#         print("JSON ERROR:", e)
-#         print("BAD PART:", repr(cleaned[200:350]))
-#         raise
-
-
 async def get_user(msisdn: str, session: aiohttp.ClientSession):
     url = f"http://10.84.33.83/gpon/cch/view.php?action=get_users&customer_msisdn={msisdn}"
     payload = {}
@@ -80,7 +41,7 @@ async def get_user(msisdn: str, session: aiohttp.ClientSession):
 
     try:
         async with session.post(url, data=payload, headers=headers) as response:
-            response.raise_for_status()  # выбрасывает исключение при HTTP ошибках 4xx/5xx
+            response.raise_for_status() 
             try:
                 res = await response.json()
                 return res
@@ -98,55 +59,51 @@ async def get_user(msisdn: str, session: aiohttp.ClientSession):
     
 
     
-async def get_requests(session: aiohttp.ClientSession, msisdn, offset = 0, limit = 50):
+async def get_requests(session: aiohttp.ClientSession, msisdn, offset=0, limit=50):
     try:
-        url = "http://10.84.33.83/gpon/cch/view.php?action=get_requests&customer_msisdn="+msisdn+"&offset="+str(offset)+"&limit="+str(limit)
-        payload={}
-        headers = {}
-
-        async with session.post(url, headers=headers, data=payload) as response:
-             res = await response.json()
-             return res
+        url = (
+            "http://10.84.33.83/gpon/cch/view.php?action=get_requests"
+            f"&customer_msisdn={msisdn}&offset={offset}&limit={limit}"
+        )
+        
+        async with session.post(url, headers={}, data={}) as response:
+            response.raise_for_status() 
+            return await response.json()
 
     except Exception as e:
-        return {
-            "status": "error", 
-            "message":"loyalty.db.history.get_history -> " + str(e)
-            }
+        raise Exception(f"loyalty.db.history.get_history -> {e}")
+
 
 async def get_history(session: aiohttp.ClientSession, msisdn):
     try:
         url = f"http://10.84.33.83/gpon/cch/view.php?action=get_status&customer_msisdn={msisdn}"
-        payload={}
-        headers = {}
 
-        async with session.post(url, headers=headers, data = payload) as response:
-            res = await response.json()
-            return res
+        async with session.post(url, headers={}, data = {}) as response:
+            response.raise_for_status()
+            return await response.json()
 
     except Exception as e:
-        return {
-            "status": "error", 
-            "message":"loyalty.db.history.get_history -> " + str(e)
-            }
+        raise Exception(f"loyalty.db.history.get_history -> {e}")
 
 async def add_comment(session: aiohttp.ClientSession, msisdn, case_id, comment, upload_file):
     try:
-        url = f"http://10.84.33.83/gpon/cch/view.php?action=add_comment&case_id={case_id}&customer_msisdn={msisdn}"
-        payload={'comment': comment, 'upload_file': upload_file}
-        headers = {}
-            
-        async with session.post(url, headers=headers, data=payload) as response:
-            res = await response.json()
-            return res
-        
+        url = (
+            f"http://10.84.33.83/gpon/cch/view.php?action=add_comment"
+            f"&case_id={case_id}&customer_msisdn={msisdn}"
+        )
+
+        payload = {
+            'comment': comment,
+            'upload_file': upload_file
+        }
+
+        async with session.post(url, headers={}, data=payload) as response:
+            response.raise_for_status()  # поднимает исключение при HTTP ошибке
+            return await response.json()
+
     except Exception as e:
-        print(e)
-        return {
-            "status": "error", 
-            "message":"teznet.db.teznet.find_subs -> " + str(e)
-            }
-    
+        raise Exception(f"teznet.db.teznet.find_subs -> {e}")  
+
 # async def add_device(session: aiohttp.ClientSession, msisdn, phone, device, ssid, patch_cord, drop_cabel):
 #     try:
 #         url = f"http://10.84.33.83/gpon/cch/view.php?action=add_device&msisdn={phone}&device_number={device}&ssid={ssid}&patch_cord={patch_cord}&drop_cabel={drop_cabel}&customer_msisdn={msisdn}"
@@ -165,19 +122,18 @@ async def add_comment(session: aiohttp.ClientSession, msisdn, case_id, comment, 
     
 async def find_subs(session: aiohttp.ClientSession, msisdn, fmsisdn):
     try:
-        url = f"http://10.84.33.83/gpon/cch/view.php?action=find_subs&customer_msisdn={msisdn}&msisdn={fmsisdn}"
-        payload={}
-        headers = {}
+        url = (
+            f"http://10.84.33.83/gpon/cch/view.php?action=find_subs"
+            f"&customer_msisdn={msisdn}&msisdn={fmsisdn}"
+        )
 
-        async with session.post(url, headers=headers, data=payload) as response:
-            res = await response.json()
-            return res
-    
+        async with session.post(url, headers={}, data={}) as response:
+            response.raise_for_status()  
+            return await response.json()
+
     except Exception as e:
-        return {
-            "status": "error", 
-            "message":"teznet.db.teznet.find_subs -> " + str(e)
-            }
+        raise Exception(f"teznet.db.teznet.find_subs -> {e}")
+
     
 
 async def post_requests_detail(session: aiohttp.ClientSession, msisdn, case_id):
@@ -208,47 +164,57 @@ async def post_requests_detail(session: aiohttp.ClientSession, msisdn, case_id):
 
 async def del_device(session: aiohttp.ClientSession, msisdn, phone, case_id):
     try:
-        url = f"http://10.84.33.83/gpon/cch/view.php?action=del_device&msisdn={phone}&customer_msisdn={msisdn}&case_id={case_id}"
-        payload=""
-        headers = {}
-            
-        async with session.post(url, headers=headers, data=payload) as response:
-            res = await response.json()
-            return res
+        url = (
+            f"http://10.84.33.83/gpon/cch/view.php?action=del_device"
+            f"&msisdn={phone}&customer_msisdn={msisdn}&case_id={case_id}"
+        )
+
+        async with session.post(url, headers={}, data="") as response:
+            response.raise_for_status() 
+            return await response.json()
+
     except Exception as e:
-        return {
-            "status": "error", 
-            "message":"teznet.db.teznet.add_device -> " + str(e)
-            }
-    
+        raise Exception(f"teznet.db.teznet.add_device -> {e}")
+
+
 async def req_user(session: aiohttp.ClientSession, msisdn, case_id, new_user_id):
     try:
-        url = f"http://10.84.33.83/gpon/cch/view.php?action=change_req_user&case_id={case_id}&new_user_id={new_user_id}&customer_msisdn={msisdn}"
-        payload={'case_id': case_id, 'new_stat_id': new_user_id}
-        headers = {}
-        async with session.post(url, headers=headers, data=payload) as response:
-            res = await response.json()
-            return res
+        url = (
+            f"http://10.84.33.83/gpon/cch/view.php?action=change_req_user"
+            f"&case_id={case_id}&new_user_id={new_user_id}&customer_msisdn={msisdn}"
+        )
+
+        payload = {
+            'case_id': case_id,
+            'new_stat_id': new_user_id
+        }
+
+        async with session.post(url, headers={}, data=payload) as response:
+            response.raise_for_status()  # проброс HTTP ошибок
+            return await response.json()
+
     except Exception as e:
-        return {
-            "status": "error", 
-            "message":"teznet.db.teznet.req_status -> " + str(e)
-            }
+        raise Exception(f"teznet.db.teznet.req_status -> {e}")
 
 async def req_status(session: aiohttp.ClientSession, msisdn, case_id, new_stat_id):
     try:
-        url = f"http://10.84.33.83/gpon/cch/view.php?action=change_req_status&case_id={case_id}&new_stat_id={new_stat_id}&customer_msisdn={msisdn}"
-        payload={'case_id': case_id, 'new_stat_id': new_stat_id}
-        headers = {}
+        url = (
+            f"http://10.84.33.83/gpon/cch/view.php?action=change_req_status"
+            f"&case_id={case_id}&new_stat_id={new_stat_id}&customer_msisdn={msisdn}"
+        )
 
-        async with session.post(url, headers=headers, data=payload) as response:
-            res = await response.json()
-            return res
+        payload = {
+            'case_id': case_id,
+            'new_stat_id': new_stat_id
+        }
+
+        async with session.post(url, headers={}, data=payload) as response:
+            response.raise_for_status()  
+            return await response.json()
+
     except Exception as e:
-        return {
-            "status": "error", 
-            "message":"teznet.db.teznet.req_status -> " + str(e)
-            }
+        raise Exception(f"teznet.db.teznet.req_status -> {e}")
+
 
 async def add_document_cch(
         session: aiohttp.ClientSession, 
