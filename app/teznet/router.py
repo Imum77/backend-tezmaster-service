@@ -66,13 +66,14 @@ async def add_device_by_msisdn(
             session: aiohttp.ClientSession = Depends(get_http_session)
         ):
     # if msisdn == '992112212222':
-    res = await add_device_alone(msisdn=msisdn, 
-                                     phone=data.phone, 
-                                     device=data.device, 
-                                     ssid=data.ssid, 
-                                     patch_cord=data.patch_cord, 
-                                     drop_cabel=data.drop_cabel,
-                                     session=session
+    res = await add_device_alone(
+                msisdn=msisdn, 
+                phone=data.phone, 
+                device=data.device, 
+                ssid=data.ssid, 
+                patch_cord=data.patch_cord, 
+                drop_cabel=data.drop_cabel,
+                session=session
                             )
         # return res
                
@@ -147,7 +148,7 @@ async def add_document_(
                         msisdn: str = Depends(verify_access_token)
                     ):
     res = await add_document(
-            db, 
+            db=db, 
             session=session,
             msisdn=msisdn, 
             case_id=data.case_id, 
