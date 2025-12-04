@@ -218,40 +218,20 @@ async def req_status(session: aiohttp.ClientSession, msisdn, case_id, new_stat_i
         raise HTTPException(status_code=500, detail=f"teznet.db.teznet.req_status -> {e}")
 
 
-# async def add_document_cch(
-#         session: aiohttp.ClientSession, 
-#         url: str, 
-#         msisdn: str, 
-#         case_id: int, 
-#         comment: str, 
-#         upload_file: str
-#         ) -> requests.Response:
-#     payload = json.dumps({'comment': comment, 'upload_file':upload_file})
-#     headers = {}
-
-#     async with session.post(url, headers=headers, data=payload) as response:
-#         return await response.json()
-
 async def add_document_cch(
-    session: aiohttp.ClientSession, 
-    url: str, 
-    msisdn: str, 
-    case_id: int, 
-    comment: str, 
-    upload_file: str
-) -> dict:
-    payload = json.dumps({'comment': comment, 'upload_file': upload_file})
-    headers = {'Content-Type': 'application/json'}
+        session: aiohttp.ClientSession, 
+        url: str, 
+        msisdn: str, 
+        case_id: int, 
+        comment: str, 
+        upload_file: str
+        ) -> requests.Response:
+    payload = json.dumps({'comment': comment, 'upload_file':upload_file})
+    headers = {}
 
     async with session.post(url, headers=headers, data=payload) as response:
-        text = await response.text()  # Получаем сырой ответ
-        try:
-            data = json.loads(text)   # Пробуем разобрать как JSON
-        except json.JSONDecodeError:
-            # Если не удалось разобрать, логируем и возвращаем текст
-            print(f"Не удалось разобрать JSON. Ответ сервера: {text}")
-            data = {'err_msg': 'Invalid JSON response', 'raw_response': text}
-        return data
+        return await response.json()
+
         
 async def add_document(
             db: oracledb.AsyncConnection, 
