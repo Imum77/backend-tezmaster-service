@@ -141,14 +141,14 @@ async def request_status(
 
 @router.post("/teznet/add-document/")
 async def add_document_(
-                        data: AddDocumentRequest, 
+                        data: AddDocumentRequest = Form(...), 
                         db: oracledb.AsyncConnection = Depends(get_db_conn), 
                         session: aiohttp.ClientSession = Depends(get_http_session),
                         msisdn: str = Depends(verify_access_token)
                     ):
     res = await add_document(
             db, 
-            session,
+            session=session,
             msisdn=msisdn, 
             case_id=data.case_id, 
             comment=data.comment, 
