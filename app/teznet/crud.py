@@ -218,46 +218,114 @@ async def req_status(session: aiohttp.ClientSession, msisdn, case_id, new_stat_i
         raise HTTPException(status_code=500, detail=f"teznet.db.teznet.req_status -> {e}")
 
 
+# async def add_document_cch(
+#         session: aiohttp.ClientSession, 
+#         url: str, 
+#         msisdn: str, 
+#         case_id: int, 
+#         comment: str, 
+#         upload_file: str
+#         ) -> requests.Response:
+#     payload = json.dumps({'comment': comment, 'upload_file':upload_file})
+#     headers = {}
+
+#     async with session.post(url, headers=headers, data=payload) as response:
+#         return await response.json()
+
+        
+# async def add_document(
+#             db: oracledb.AsyncConnection, 
+#             session: aiohttp.ClientSession, 
+#             msisdn: str, 
+#             case_id: int, 
+#             comment: str, 
+#             upload_file: str
+#             ):
+
+#     url             = f"http://10.84.33.83/gpon/cch/view.php?action=add_document&case_id={case_id}&customer_msisdn={msisdn}"
+#     response_json   = await add_document_cch(session, url, msisdn, case_id, comment, upload_file)
+#     r_err_msg       = response_json.get('err_msg')
+
+#     cursor = db.cursor()
+
+#     try:
+#         o_result   = cursor.var(oracledb.NUMBER)
+#         o_err_msg  = cursor.var(oracledb.STRING)
+
+#         await cursor.callproc('log_mytcell_order', ('992934771005', url, str(response_json), r_err_msg , 'AddDocument', o_result, o_err_msg))
+        
+#         result_code = o_result.getvalue()
+#         result_msg  = o_err_msg.getvalue()
+        
+#         if result_code != 0:
+#              raise HTTPException(status_code=400, detail={'status': 'error', 'message': result_msg})
+#         return response_json
+
+#     except oracledb.DatabaseError as e:
+#         raise HTTPException(status_code=500, detail=str(e))
+    
+#     finally:
+#         cursor.close()
+
+# Отправляем файл как строку через JSON
 async def add_document_cch(
         session: aiohttp.ClientSession, 
         url: str, 
         msisdn: str, 
         case_id: int, 
         comment: str, 
-        upload_file: str
-        ) -> requests.Response:
-    payload = json.dumps({'comment': comment, 'upload_file':upload_file})
-    headers = {}
+        upload_file: str  
+    ) -> dict:
+    
+    payload = json.dumps({
+        'comment': comment,
+        'upload_file': upload_file
+    })
+    
+    headers = {
+        'Content-Type': 'application/json'
+    }
 
     async with session.post(url, headers=headers, data=payload) as response:
-        return await response.json()
+        return await response.json()  
+
 
 async def add_document(
-            db: oracledb.AsyncConnection, 
-            session: aiohttp.ClientSession, 
-            msisdn: str, 
-            case_id: int, 
-            comment: str, 
-            upload_file: str
-            ):
+        db: oracledb.AsyncConnection, 
+        session: aiohttp.ClientSession, 
+        msisdn: str, 
+        case_id: int, 
+        comment: str, 
+        upload_file: str
+    ):
 
-    url             = f"http://10.84.33.83/gpon/cch/view.php?action=add_document&case_id={case_id}&customer_msisdn={msisdn}"
-    response_json   = await add_document_cch(session, url, msisdn, case_id, comment, upload_file)
-    r_err_msg       = response_json.get('err_msg')
+    url = f"http://10.84.33.83/gpon/cch/view.php?action=add_document&case_id={case_id}&customer_msisdn={msisdn}"
+    
+    response_json = await add_document_cch(session, url, msisdn, case_id, comment, upload_file)
+    r_err_msg = response_json.get('err_msg')
 
     cursor = db.cursor()
 
     try:
-        o_result   = cursor.var(oracledb.NUMBER)
-        o_err_msg  = cursor.var(oracledb.STRING)
+        o_result = cursor.var(oracledb.NUMBER)
+        o_err_msg = cursor.var(oracledb.STRING)
 
-        await cursor.callproc('log_mytcell_order', ('992934771005', url, str(response_json), r_err_msg , 'AddDocument', o_result, o_err_msg))
+        await cursor.callproc('log_mytcell_order', (
+            '992934771005',
+            url,
+            str(response_json),
+            r_err_msg,
+            'AddDocument',
+            o_result,
+            o_err_msg
+        ))
         
         result_code = o_result.getvalue()
-        result_msg  = o_err_msg.getvalue()
+        result_msg = o_err_msg.getvalue()
         
         if result_code != 0:
-             raise HTTPException(status_code=400, detail={'status': 'error', 'message': result_msg})
+            raise HTTPException(status_code=400, detail={'status': 'error', 'message': result_msg})
+        
         return response_json
 
     except oracledb.DatabaseError as e:
@@ -265,6 +333,7 @@ async def add_document(
     
     finally:
         cursor.close()
+
 
 async def add_device_alone(
     session: aiohttp.ClientSession,

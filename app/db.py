@@ -30,7 +30,7 @@ async def init_db():
     global POOL
     if POOL is None:
         logger.info("Initializing Oracle DB connection pool...")
-        POOL = await oracledb.create_pool_async(
+        POOL = oracledb.create_pool_async(
             user=conf.BILL_USERNAME,
             password=conf.BILL_PASSWORD,
             dsn=dsn,

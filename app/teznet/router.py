@@ -148,8 +148,8 @@ async def add_document_(
                         msisdn: str = Depends(verify_access_token)
                     ):
     res = await add_document(
-            db=db, 
-            session=session,
+            db, 
+            session,
             msisdn=msisdn, 
             case_id=data.case_id, 
             comment=data.comment, 
