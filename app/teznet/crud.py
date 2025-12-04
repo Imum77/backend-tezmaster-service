@@ -52,7 +52,7 @@ async def get_user(msisdn: str, session: aiohttp.ClientSession):
         raise HTTPException(status_code=503, detail=f"Cannot connect to {url}")
 
     except aiohttp.ClientResponseError as e:
-        raise HTTPException(status_code=e.status, detail=f"HTTP error {e.status} on {url}: {e.message}")
+        raise HTTPException(status_code=500, detail=f"HTTP error {e.status} on {url}: {e.message}")
 
     except Exception as e:
         raise HTTPException(status_code=500, detail=f"get_user error: {e}")
@@ -158,7 +158,7 @@ async def post_requests_detail(session: aiohttp.ClientSession, msisdn, case_id):
     except aiohttp.ClientConnectorError:
         raise HTTPException(status_code=503, detail=f"Cannot connect to {url}")
     except aiohttp.ClientResponseError as e:
-        raise HTTPException(status_code=e.status, detail=f"HTTP error {e.status} on {url}: {e.message}")
+        raise HTTPException(status_code=500, detail=f"HTTP error {e.status} on {url}: {e.message}")
     except Exception as e:
         raise HTTPException(status_code=500, detail=f"post_requests_detail error: {e}")
     
