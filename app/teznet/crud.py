@@ -59,7 +59,7 @@ async def get_user(msisdn: str, session: aiohttp.ClientSession):
     
 
     
-async def get_requests(session: aiohttp.ClientSession, msisdn, offset=0, limit=15):
+async def get_requests(session: aiohttp.ClientSession, msisdn, offset=0, limit=50):
     try:
         url = (
             "http://10.84.33.83/gpon/cch/view.php?action=get_requests"
