@@ -15,7 +15,6 @@ from teznet.schemas       import (
 from auth.utils.utils     import verify_access_token
 from dependencies.session import get_http_session
 
-
 router = APIRouter()
 
 
@@ -35,6 +34,8 @@ async def get_requests_by_msisdn(
     ):
     res = await get_requests(msisdn=msisdn, limit=data.limit, offset=data.offset, session=session)
     return res
+
+
 
 @router.get("/teznet/teznet-status/")
 async def get_status_by_msisdn(
