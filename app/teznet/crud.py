@@ -2,7 +2,16 @@ from fastapi import HTTPException
 import requests, oracledb
 import json
 import aiohttp
-import re
+
+def sanitize_json_string(raw: str) -> str:
+    """
+    Исправляет известные ошибки в JSON:
+    - Заменяет внутренние кавычки вокруг GPON
+    - Можно добавить другие паттерны исправления
+    """
+    # Экранируем внутренние кавычки вокруг GPON
+    return raw.replace('"GPON"', 'GPON')
+
 
 def sanitize_json_string(s: str) -> str:
 
@@ -35,10 +44,6 @@ def sanitize_json_string(s: str) -> str:
 
     return "".join(fixed)
 
-
-
-
-
 async def get_user(msisdn: str, session: aiohttp.ClientSession):
     url = f"http://10.84.33.83/gpon/cch/view.php?action=get_users&customer_msisdn={msisdn}"
     payload = {}
@@ -63,7 +68,6 @@ async def get_user(msisdn: str, session: aiohttp.ClientSession):
         raise HTTPException(status_code=500, detail=f"get_user error: {e}")
     
 
-
 async def get_requests(session: aiohttp.ClientSession, msisdn, offset=0, limit=50):
     try:
         url = (
@@ -73,13 +77,21 @@ async def get_requests(session: aiohttp.ClientSession, msisdn, offset=0, limit=5
         async with session.post(url, headers={}, data={}) as response:
             response.raise_for_status()
             raw = await response.text()
-            # Исправляем внутренние кавычки, чтобы JSON стал валидным
-            cleaned = raw.replace('"GPON"', 'GPON')
+
+            # Внутренняя функция для исправления JSON
+            def sanitize_json_string(raw_text: str) -> str:
+                # Исправляем внутренние кавычки вокруг GPON
+                return raw_text.replace('"GPON"', 'GPON')
+
+            # Применяем исправление
+            cleaned = sanitize_json_string(raw)
+
+            # Парсим JSON
             return json.loads(cleaned)
 
     except Exception as e:
         raise HTTPException(status_code=500, detail=f"loyalty.db.history.get_history -> {e}")
-    
+
 
 async def get_history(session: aiohttp.ClientSession, msisdn):
     try:
@@ -127,15 +139,16 @@ async def find_subs(session: aiohttp.ClientSession, msisdn, fmsisdn):
     except Exception as e:
         raise HTTPException(status_code=500, detail=f"teznet.db.teznet.find_subs -> {e}")
 
-    
 
 async def post_requests_detail(session: aiohttp.ClientSession, msisdn, case_id):
     url = f"http://10.84.33.83/gpon/cch/view.php?action=get_req_detail&case_id={case_id}&customer_msisdn={msisdn}"
 
     try:
         async with session.post(url) as response:
-            response.raise_for_status() 
+            response.raise_for_status()
             raw_text = await response.text()
+            
+            # Чиним JSON так же, как в get_requests
             cleaned_text = sanitize_json_string(raw_text)
 
             try:
@@ -153,7 +166,6 @@ async def post_requests_detail(session: aiohttp.ClientSession, msisdn, case_id):
         raise HTTPException(status_code=500, detail=f"HTTP error {e.status} on {url}: {e.message}")
     except Exception as e:
         raise HTTPException(status_code=500, detail=f"post_requests_detail error: {e}")
-    
 
 
 async def del_device(session: aiohttp.ClientSession, msisdn, phone, case_id):
