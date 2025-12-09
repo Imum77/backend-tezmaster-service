@@ -20,8 +20,6 @@ async def get_db():
         yield session
 
 
-
-
 dsn = oracledb.makedsn(conf.BILL_HOST, conf.BILL_PORT, service_name=conf.BILL_SERVICE_NAME)
 POOL = None
 POOL_LOCK = asyncio.Lock()
