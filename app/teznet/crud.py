@@ -148,7 +148,7 @@ async def post_requests_detail(session: aiohttp.ClientSession, msisdn, case_id):
             response.raise_for_status()
             raw_text = await response.text()
             
-            # Чиним JSON так же, как в get_requests
+            # Чиним JSON так же, как в get_requests 
             cleaned_text = sanitize_json_string(raw_text)
 
             try:

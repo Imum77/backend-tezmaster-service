@@ -141,7 +141,7 @@ async def request_status(
     return res
 
 
-@router.post("teznet/add-document/")
+@router.post("/teznet/add-document/")
 async def add_document_(
                         data: AddDocumentRequest = Form(...), 
                         db: oracledb.AsyncConnection = Depends(get_db_conn), 
