@@ -66,7 +66,6 @@ async def add_device_by_msisdn(
             msisdn: str = Depends(verify_access_token),
             session: aiohttp.ClientSession = Depends(get_http_session)
         ):
-    # if msisdn == '992112212222':
     res = await add_device_alone(
                 msisdn=msisdn, 
                 phone=data.phone, 
@@ -76,7 +75,6 @@ async def add_device_by_msisdn(
                 drop_cabel=data.drop_cabel,
                 session=session
                             )
-        # return res
                
     return res
 

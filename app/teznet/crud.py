@@ -9,7 +9,7 @@ def sanitize_json_string(raw: str) -> str:
     - Заменяет внутренние кавычки вокруг GPON
     - Можно добавить другие паттерны исправления
     """
-    # Экранируем внутренние кавычки вокруг GPON
+
     return raw.replace('"GPON"', 'GPON')
 
 
@@ -78,15 +78,9 @@ async def get_requests(session: aiohttp.ClientSession, msisdn, offset=0, limit=5
             response.raise_for_status()
             raw = await response.text()
 
-            # Внутренняя функция для исправления JSON
             def sanitize_json_string(raw_text: str) -> str:
-                # Исправляем внутренние кавычки вокруг GPON
                 return raw_text.replace('"GPON"', 'GPON')
-
-            # Применяем исправление
             cleaned = sanitize_json_string(raw)
-
-            # Парсим JSON
             return json.loads(cleaned)
 
     except Exception as e:
@@ -147,8 +141,6 @@ async def post_requests_detail(session: aiohttp.ClientSession, msisdn, case_id):
         async with session.post(url) as response:
             response.raise_for_status()
             raw_text = await response.text()
-            
-            # Чиним JSON так же, как в get_requests 
             cleaned_text = sanitize_json_string(raw_text)
 
             try:
